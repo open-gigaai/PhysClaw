@@ -1,0 +1,27 @@
+{
+  "_comment": "Camera-to-arm-base extrinsics. Reference values are for a Piper+RealSense desk setup; replace with your calibration. Each arm maps to rotation R (3x3) and translation t (3,) of cam->base.",
+  "left": {
+    "label": "left_arm_base",
+    "R": [
+      [0.0, 0.0, 1.0],
+      [-1.0, 0.0, 0.0],
+      [0.0, -1.0, 0.0]
+    ],
+    "t": [0.0, 0.0, 0.0]
+  },
+  "right": {
+    "label": "right_arm_base",
+    "R": [
+      [0.0, 0.0, 1.0],
+      [-1.0, 0.0, 0.0],
+      [0.0, -1.0, 0.0]
+    ],
+    "t": [0.0, 0.0, 0.0]
+  },
+  "T_tcp_flange": [
+    [0, 0, 1, -0.09],
+    [0, 1, 0, 0.0],
+    [-1, 0, 0, 0.0],
+    [0, 0, 0, 1.0]
+  ]
+}

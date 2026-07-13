@@ -1,0 +1,31 @@
+# Example analyze_result.yaml for PhysGnosis self-learning.
+# Copy to analyze_result.yaml and edit before running stage B.
+
+task_name: put_fruit_in_basket
+dataset_dir: /path/to/datasets/put_fruit_in_basket
+need_collect_count: 10
+current_collect_count: 0
+task_description: Grasp objects into the center basket, then reset them onto the table.
+
+collection_plan:
+  - step_1: Use grasp-tool to place target objects into the basket.
+collection_command:
+  - step_1: >
+      bash $PHYSGNOSIS_ROOT/grasp-tools/run_multi_pipeline_recorder.sh
+      --mode diligent --no-gui --top-down --collect
+      --task "banana" left 0.3 -0.27 0
+      --task "orange" right 0.3 0.27 0
+
+reset_plan:
+  - step_1: Use grasp-tool to take objects out of the basket onto the table.
+reset_command:
+  - step_1: >
+      bash $PHYSGNOSIS_ROOT/grasp-tools/run_multi_pipeline_recorder.sh
+      --mode diligent --no-gui --top-down
+      --task "banana" left 0.34 0 0
+      --task "orange" right 0.34 0 0
+
+collect_success_criteria: Target objects are inside the basket.
+prompt_for_judging_collect: Are the target objects inside the basket? Answer YES or NO first.
+reset_success_criteria: Target objects are back on the table outside the basket.
+prompt_for_judging_reset: Are the target objects back on the table (not in the basket)? Answer YES or NO first.

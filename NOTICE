@@ -1,0 +1,15 @@
+PhysGnosis
+Copyright 2026 PhysGnosis Contributors
+
+This product includes software developed for agentic robot grasp and
+self-collection workflows.
+
+Third-party components (NOT redistributed in this repository; install
+separately and comply with their respective licenses):
+
+- AnyGrasp / GraspNet SDK (proprietary binary + license + weights)
+- SAM3 (Meta) — text-prompt segmentation
+- Your robot arm ROS stack and camera drivers (reference lab used Agilex Piper
+  and Intel RealSense; not required)
+- Pinocchio / CasADi (IK backends, via your local arm install)
+- Optional external HDF5 episode recorder

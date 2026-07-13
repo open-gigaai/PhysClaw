@@ -1,0 +1,33 @@
+# Secrets / local config
+.env
+paths.env
+configs/paths.env
+*.lic
+
+# Proprietary AnyGrasp runtime (install separately)
+*.so
+gsnet_versions/
+license/
+log/
+checkpoint*.tar
+*.tar
+
+# Runtime / data
+collected_data/
+**/tmp/
+__pycache__/
+*.py[cod]
+*.npy
+*.hdf5
+*.h5
+*.mp4
+.DS_Store
+
+# Local analyze results (keep *.example.yaml)
+skills/self-learning/analyze_result.yaml
+
+# IDE / venv
+.venv/
+venv/
+.idea/
+.vscode/

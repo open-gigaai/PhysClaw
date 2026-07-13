@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode Collection Report</title>
+<style>
+:root {
+  --surface-1: #fcfcfb; --page: #f9f9f7;
+  --ink-1: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+  --s1: #2a78d6; --s2: #1baf7a; --s3: #eda100; --s4: #008300;
+  --s5: #4a3aa7; --s6: #e34948; --s7: #e87ba4;
+  --good: #0ca30c; --critical: #d03b3b; --seq: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-1: #1a1a19; --page: #0d0d0d;
+    --ink-1: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+    --s1: #3987e5; --s2: #199e70; --s3: #c98500; --s4: #008300;
+    --s5: #9085e9; --s6: #e66767; --s7: #d55181;
+    --seq: #3987e5;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink-1);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 16px; margin: 32px 0 10px; }
+.sub, footer { color: var(--muted); font-size: 12px; }
+.card { background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px,1fr));
+  gap: 10px; margin-top: 14px; }
+.tile { background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px; }
+.tile .lbl { color: var(--ink-2); font-size: 12px; }
+.tile .val { font-size: 24px; font-weight: 600; margin-top: 2px; }
+.tile .aux { color: var(--muted); font-size: 11px; margin-top: 2px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px,1fr)); gap: 12px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 12px; }
+.chart-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.chart-title { font-weight: 600; font-size: 13px; }
+.chart-sub { color: var(--muted); font-size: 11px; }
+button.tbl-toggle { background: none; border: 1px solid var(--border); color: var(--ink-2);
+  border-radius: 6px; font-size: 11px; padding: 2px 8px; cursor: pointer; }
+button.tbl-toggle:hover { border-color: var(--axis); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11px;
+  color: var(--ink-2); margin: 6px 0 2px; }
+.legend .key { display: inline-block; width: 14px; height: 0; border-top: 2px solid;
+  vertical-align: middle; margin-right: 5px; border-radius: 1px; }
+svg { display: block; width: 100%; height: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+th, td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--grid);
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+th:first-child, td:first-child, th.txt, td.txt { text-align: left; }
+th { color: var(--ink-2); font-weight: 600; cursor: pointer; user-select: none; }
+th .arrow { color: var(--muted); font-size: 10px; }
+tbody tr.clickable { cursor: pointer; }
+tbody tr.clickable:hover { background: color-mix(in srgb, var(--ink-1) 4%, transparent); }
+tbody tr.selected { background: color-mix(in srgb, var(--s1) 10%, transparent); }
+.scroll-x { overflow-x: auto; }
+.status { display: inline-flex; align-items: center; gap: 4px; }
+.status .swatch { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip { border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px;
+  font-size: 11px; color: var(--ink-2); }
+.chip b { color: var(--ink-1); font-weight: 600; }
+.strip { display: flex; flex-wrap: wrap; gap: 3px; }
+.strip .sq { width: 16px; height: 16px; border-radius: 3px; display: flex; align-items: center;
+  justify-content: center; font-size: 10px; color: #fff; cursor: default; }
+#tooltip { position: fixed; pointer-events: none; background: var(--surface-1);
+  border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  padding: 7px 10px; font-size: 12px; display: none; z-index: 10; max-width: 280px; }
+#tooltip .t-x { color: var(--muted); font-size: 11px; margin-bottom: 3px; }
+#tooltip .t-row { display: flex; align-items: center; gap: 6px; }
+#tooltip .t-key { width: 12px; border-top: 2px solid; border-radius: 1px; }
+#tooltip .t-val { font-weight: 600; font-variant-numeric: tabular-nums; }
+#tooltip .t-name { color: var(--ink-2); }
+.del-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+button.del-btn { background: none; border: 1px solid var(--critical); color: var(--critical);
+  border-radius: 6px; font-size: 12px; padding: 4px 12px; cursor: pointer; }
+button.del-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--critical) 8%, transparent); }
+button.del-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+button.vid-btn { background: none; border: 1px solid var(--s2); color: var(--s2);
+  border-radius: 6px; font-size: 12px; padding: 4px 12px; cursor: pointer; }
+button.vid-btn:hover { background: color-mix(in srgb, var(--s2) 8%, transparent); }
+.vid-wrap video { width: 100%; max-height: 60vh; border-radius: 8px; background: #000;
+  display: block; }
+.del-hint { color: var(--muted); font-size: 11px; }
+.del-hint.warn { color: var(--critical); }
+th.chk, td.chk { width: 28px; text-align: center; cursor: default; }
+th.chk input, td.chk input { cursor: pointer; }
+tr.marked-del { opacity: 0.45; }
+/* episode detail drawer: keep the table in place, inspect without scrolling */
+.drawer { position: fixed; inset: 0; z-index: 40; display: none; }
+.drawer.open { display: block; }
+.drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.28); }
+.drawer-panel { position: absolute; top: 0; right: 0; height: 100%; width: min(720px, 96vw);
+  background: var(--page); border-left: 1px solid var(--border);
+  box-shadow: -8px 0 24px rgba(0,0,0,0.12); display: flex; flex-direction: column; }
+.drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 16px 18px 10px; border-bottom: 1px solid var(--border); background: var(--surface-1);
+  flex-shrink: 0; }
+.drawer-head h2 { font-size: 16px; margin: 0; line-height: 1.35; }
+.drawer-close { background: none; border: 1px solid var(--border); color: var(--ink-2);
+  border-radius: 6px; font-size: 14px; width: 32px; height: 32px; cursor: pointer; flex-shrink: 0; }
+.drawer-close:hover { border-color: var(--axis); color: var(--ink-1); }
+.drawer-body { overflow-y: auto; padding: 14px 16px 32px; flex: 1; }
+.strip .sq { cursor: pointer; }
+.tbl-hint { color: var(--muted); font-size: 12px; margin: -4px 0 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Episode Collection Report</h1>
+    <div class="sub" id="meta"></div>
+  </header>
+  <section class="tiles" id="kpis"></section>
+
+  <h2>Per-task overview</h2>
+  <div class="card" id="taskBars"></div>
+  <div class="card">
+    <div class="chart-head"><span class="chart-title">Episode timeline</span>
+      <span class="chart-sub" id="stripLegend"></span></div>
+    <div class="strip" id="strip" style="margin-top:8px"></div>
+  </div>
+
+  <h2>Episodes comparison</h2>
+  <p class="tbl-hint">Click a row to open the detail drawer (list stays put)</p>
+  <div class="del-bar" id="delBar">
+    <button class="del-btn" id="delBtn" disabled>Delete selected</button>
+    <span class="del-hint" id="delHint"></span>
+  </div>
+  <div class="card scroll-x"><table id="epTable"></table></div>
+
+  <h2>Distributions</h2>
+  <div class="grid3" id="hists"></div>
+
+  <div id="trainSection" style="display:none">
+    <h2>Scaling curve (train &amp; eval)</h2>
+    <div class="grid2" id="scalingCurve"></div>
+    <div class="card scroll-x"><table id="runTable"></table></div>
+  </div>
+
+  <footer id="foot" style="margin-top:28px"></footer>
+</div>
+<div id="tooltip"></div>
+<div id="detailDrawer" class="drawer" aria-hidden="true">
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer-head">
+      <h2 id="drawerTitle">Episode detail <span class="chart-sub" id="detailName"></span></h2>
+      <button type="button" class="drawer-close" id="drawerClose" title="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="detail"></div>
+  </aside>
+</div>
+<script>window.DATA = /*__DATA__*/{};</script>
+<script>
+(function () {
+"use strict";
+const D = window.DATA || {};
+const FPS = 30;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const SLOTS = ["--s1","--s2","--s3","--s4","--s5","--s6","--s7"];
+const STATUS = { success: "--good", failed: "--critical", unknown: "--muted" };
+const statusOf = v => (v === "success" || v === "failed") ? v : "unknown";
+const GLYPH = { success: "✓", failed: "✕", unknown: "?" };
+const API_OK = location.protocol.startsWith("http");
+const checked = new Set();
+let selectedRow = null, tblCtl = null;
+
+// ---- tiny DOM/SVG helpers (all user-derived text via textContent) ----------
+function el(tag, attrs, parent, text) {
+  const e = document.createElement(tag);
+  for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const NS = "http://www.w3.org/2000/svg";
+function sv(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function fmt(v, nd) {
+  if (v === null || v === undefined || Number.isNaN(v)) return "–";
+  if (typeof v !== "number") return String(v);
+  const d = (nd !== undefined) ? nd : (Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 1 ? 1 : 3);
+  return v.toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: 0 });
+}
+const pct = v => v == null ? "–" : (100 * v).toFixed(0) + "%";
+function bytesFmt(b) {
+  if (b == null) return "–";
+  const u = ["B","KB","MB","GB","TB"]; let i = 0;
+  while (b >= 1024 && i < u.length - 1) { b /= 1024; i++; }
+  return fmt(b, b >= 100 ? 0 : 1) + " " + u[i];
+}
+function durFmt(s) {
+  if (s == null) return "–";
+  return s >= 90 ? Math.floor(s / 60) + "m " + Math.round(s % 60) + "s" : fmt(s, 1) + "s";
+}
+
+// ---- tooltip ---------------------------------------------------------------
+const tip = document.getElementById("tooltip");
+function showTip(evt, xLabel, rows) {
+  tip.textContent = "";
+  if (xLabel) el("div", { class: "t-x" }, tip, xLabel);
+  for (const r of rows) {
+    const d = el("div", { class: "t-row" }, tip);
+    if (r.color) el("span", { class: "t-key", style: "border-color:" + r.color }, d);
+    el("span", { class: "t-val" }, d, r.value);
+    el("span", { class: "t-name" }, d, r.name);
+  }
+  tip.style.display = "block";
+  moveTip(evt);
+}
+function moveTip(evt) {
+  const pad = 12, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  if (x + w > innerWidth - 8) x = evt.clientX - w - pad;
+  if (y + h > innerHeight - 8) y = evt.clientY - h - pad;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+function hideTip() { tip.style.display = "none"; }
+
+// ---- chart card scaffolding (title + table-view toggle) --------------------
+function chartCard(parent, title, sub) {
+  const card = el("div", { class: "card" }, parent);
+  const head = el("div", { class: "chart-head" }, card);
+  const tl = el("div", {}, head);
+  el("span", { class: "chart-title" }, tl, title);
+  if (sub) el("span", { class: "chart-sub", style: "margin-left:8px" }, tl, sub);
+  const btn = el("button", { class: "tbl-toggle" }, head, "Table");
+  const body = el("div", {}, card);
+  const tblWrap = el("div", { class: "scroll-x", style: "display:none" }, card);
+  let built = false;
+  card._setTable = builder => {
+    btn.onclick = () => {
+      const showTbl = tblWrap.style.display === "none";
+      if (showTbl && !built) { builder(tblWrap); built = true; }
+      tblWrap.style.display = showTbl ? "" : "none";
+      body.style.display = showTbl ? "none" : "";
+      btn.textContent = showTbl ? "Chart" : "Table";
+    };
+  };
+  return { card, body, tblWrap };
+}
+function seriesTable(wrap, xName, xs, series, xF, yF) {
+  const t = el("table", {}, wrap);
+  const hr = el("tr", {}, el("thead", {}, t));
+  el("th", { class: "txt" }, hr, xName);
+  for (const s of series) el("th", {}, hr, s.name);
+  const tb = el("tbody", {}, t);
+  for (let i = 0; i < xs.length; i++) {
+    const tr = el("tr", {}, tb);
+    el("td", { class: "txt" }, tr, (xF || fmt)(xs[i]));
+    for (const s of series) el("td", {}, tr, (yF || fmt)(s.ys[i]));
+  }
+}
+
+// ---- line chart (shared-x multi-series, crosshair tooltip, markers) --------
+function lineChart(parent, cfg) {
+  // cfg: {title, sub, xs, series:[{name, color, ys}], h, yFmt, xFmt, markX:[x...], markLabel}
+  const { body, card } = chartCard(parent, cfg.title, cfg.sub);
+  card._setTable(w => seriesTable(w, cfg.xName || "t (s)", cfg.xs, cfg.series, cfg.xFmt, cfg.yFmt));
+  const W = 560, H = cfg.h || 190, m = { l: 46, r: 12, t: 10, b: 24 };
+  const xs = cfg.xs, yF = cfg.yFmt || (v => fmt(v));
+  const xF = cfg.xFmt || (v => fmt(v, 1));
+  if (!xs || !xs.length) { el("div", { class: "chart-sub" }, body, "no data"); return; }
+  let lo = Infinity, hi = -Infinity;
+  for (const s of cfg.series) for (const v of s.ys) {
+    if (v == null) continue;
+    if (v < lo) lo = v; if (v > hi) hi = v;
+  }
+  if (!isFinite(lo)) { lo = 0; hi = 1; }
+  if (hi === lo) { hi = lo + 1; }
+  const padY = (hi - lo) * 0.06; lo -= padY; hi += padY;
+  const x0 = xs[0], x1 = xs[xs.length - 1] || 1;
+  const X = v => m.l + (v - x0) / (x1 - x0 || 1) * (W - m.l - m.r);
+  const Y = v => m.t + (1 - (v - lo) / (hi - lo)) * (H - m.t - m.b);
+
+  if (cfg.series.length >= 2) {
+    const lg = el("div", { class: "legend" }, body);
+    for (const s of cfg.series) {
+      const it = el("span", {}, lg);
+      el("span", { class: "key", style: "border-color:" + s.color }, it);
+      it.appendChild(document.createTextNode(s.name));
+    }
+  }
+  const svg = sv("svg", { viewBox: "0 0 " + W + " " + H }, body);
+  // recessive hairline grid + y ticks
+  for (let i = 0; i <= 3; i++) {
+    const v = lo + (hi - lo) * i / 3, y = Y(v);
+    sv("line", { x1: m.l, x2: W - m.r, y1: y, y2: y, stroke: css("--grid"), "stroke-width": 1 }, svg);
+    const t = sv("text", { x: m.l - 6, y: y + 3, "text-anchor": "end", "font-size": 10,
+                           fill: css("--muted") }, svg);
+    t.textContent = yF(v);
+  }
+  sv("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: css("--axis"), "stroke-width": 1 }, svg);
+  for (const fx of [0, 0.5, 1]) {
+    const v = x0 + (x1 - x0) * fx;
+    const t = sv("text", { x: X(v), y: H - 8, "text-anchor": fx === 0 ? "start" : fx === 1 ? "end" : "middle",
+                           "font-size": 10, fill: css("--muted") }, svg);
+    t.textContent = xF(v);
+  }
+  // discontinuity/event markers: short red ticks on the baseline
+  for (const mx of cfg.markX || []) {
+    sv("line", { x1: X(mx), x2: X(mx), y1: m.t, y2: H - m.b, stroke: css("--critical"),
+                 "stroke-width": 1, "stroke-dasharray": "2,3", opacity: 0.8 }, svg);
+  }
+  for (const s of cfg.series) {
+    const pts = [];
+    for (let i = 0; i < xs.length; i++)
+      if (s.ys[i] != null) pts.push(X(xs[i]).toFixed(1) + "," + Y(s.ys[i]).toFixed(1));
+    sv("polyline", { points: pts.join(" "), fill: "none", stroke: s.color,
+                     "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    if (cfg.dots)  // point markers: sparse series (e.g. one point per milestone)
+      for (let i = 0; i < xs.length; i++)
+        if (s.ys[i] != null) sv("circle", { cx: X(xs[i]), cy: Y(s.ys[i]), r: 3.5, fill: s.color }, svg);
+  }
+  // crosshair + tooltip over the whole plot
+  const cross = sv("line", { y1: m.t, y2: H - m.b, stroke: css("--axis"), "stroke-width": 1,
+                             visibility: "hidden" }, svg);
+  const hit = sv("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b,
+                           fill: "transparent" }, svg);
+  hit.addEventListener("pointermove", evt => {
+    const r = svg.getBoundingClientRect();
+    const px = (evt.clientX - r.left) / r.width * W;
+    let best = 0, bd = Infinity;
+    for (let i = 0; i < xs.length; i++) {
+      const d = Math.abs(X(xs[i]) - px);
+      if (d < bd) { bd = d; best = i; }
+    }
+    cross.setAttribute("x1", X(xs[best])); cross.setAttribute("x2", X(xs[best]));
+    cross.setAttribute("visibility", "visible");
+    showTip(evt, (cfg.xName || "t") + " = " + xF(xs[best]),
+      cfg.series.map(s => ({ color: s.color, name: s.name, value: yF(s.ys[best]) })));
+  });
+  hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(); });
+}
+
+// ---- horizontal stacked status bars (per task) ------------------------------
+function taskBars(parent) {
+  const tasks = Object.keys(D.tasks || {});
+  const head = el("div", { class: "chart-head" }, parent);
+  el("span", { class: "chart-title" }, head, "Per-task vision results");
+  const lg = el("div", { class: "legend" }, parent);
+  for (const st of ["success", "failed", "unknown"]) {
+    const it = el("span", { class: "status" }, lg);
+    el("span", { class: "swatch", style: "background:" + css(STATUS[st]) }, it);
+    it.appendChild(document.createTextNode(GLYPH[st] + " " + st));
+  }
+  const W = 560, rowH = 26, barH = 16, m = { l: 130, r: 40 };
+  const svg = sv("svg", { viewBox: "0 0 " + W + " " + (tasks.length * rowH + 6) }, parent);
+  let maxN = 1;
+  for (const t of tasks) maxN = Math.max(maxN, D.tasks[t].episodes.length);
+  tasks.forEach((t, i) => {
+    const rows = D.tasks[t].episodes;
+    const counts = { success: 0, failed: 0, unknown: 0 };
+    for (const r of rows) counts[statusOf(r.vision)]++;
+    const y = i * rowH + 4;
+    const lab = sv("text", { x: m.l - 8, y: y + barH - 4, "text-anchor": "end", "font-size": 11,
+                             fill: css("--ink-2") }, svg);
+    lab.textContent = t;
+    let x = m.l;
+    const unit = (W - m.l - m.r) / maxN;
+    for (const st of ["success", "failed", "unknown"]) {
+      const w = counts[st] * unit;
+      if (w <= 0) continue;
+      const seg = sv("rect", { x: x, y: y, width: Math.max(w - 2, 1), height: barH, rx: 3,
+                               fill: css(STATUS[st]) }, svg);   // 2px surface gap between segments
+      seg.addEventListener("pointermove", evt => showTip(evt, t,
+        [{ color: css(STATUS[st]), name: st, value: String(counts[st]) }]));
+      seg.addEventListener("pointerleave", hideTip);
+      if (w > 16) {
+        const tx = sv("text", { x: x + Math.max(w - 2, 1) / 2, y: y + barH - 4,
+          "text-anchor": "middle", "font-size": 10, fill: "#fff" }, svg);
+        tx.textContent = counts[st];
+      }
+      x += w;
+    }
+    const tot = sv("text", { x: x + 6, y: y + barH - 4, "font-size": 10, fill: css("--muted") }, svg);
+    tot.textContent = rows.length;
+  });
+}
+
+// ---- episode strip -----------------------------------------------------------
+function strip(parent, allRows) {
+  for (const r of allRows) {
+    const st = statusOf(r.vision);
+    const sq = el("div", { class: "sq", style: "background:" + css(STATUS[st]),
+                           title: "Click to inspect" }, parent, GLYPH[st]);
+    sq.addEventListener("pointermove", evt => showTip(evt, r._task + " · " + r.session, [
+      { name: "vision", value: r.vision || "–", color: css(STATUS[st]) },
+      { name: "smooth", value: fmt(r.smoothness_score, 1) },
+      { name: "duration", value: durFmt(r.duration_s) },
+    ]));
+    sq.addEventListener("pointerleave", hideTip);
+    sq.addEventListener("click", () => openDetail(r));
+  }
+  el("span", {}, document.getElementById("stripLegend"),
+     "one square per episode by vision result · click to inspect");
+}
+
+// ---- KPI tiles ---------------------------------------------------------------
+function meanStd(mean, std, nd) {
+  if (mean == null) return "–";
+  return fmt(mean, nd) + (std != null ? " ± " + fmt(std, nd) : "");
+}
+function tiles(parent) {
+  const o = D.overall || {};
+  const mk = (lbl, val, aux) => {
+    const t = el("div", { class: "tile" }, parent);
+    el("div", { class: "lbl" }, t, lbl);
+    el("div", { class: "val" }, t, val);
+    if (aux) el("div", { class: "aux" }, t, aux);
+  };
+  mk("Episodes", fmt(o.episodes, 0));
+  mk("Vision success rate", pct(o.success_rate_vision),
+     o.unknown_vision ? o.unknown_vision + " unknown" : "");
+  mk("Smoothness", meanStd(o.mean_smoothness, o.std_smoothness, 1),
+     "median " + fmt(o.median_smoothness, 1));
+  mk("Aesthetics", meanStd(o.mean_aesthetics, o.std_aesthetics, 1));
+  mk("Sharpness", meanStd(o.mean_sharpness, o.std_sharpness, 0));
+  mk("Brightness", meanStd(o.mean_brightness, o.std_brightness, 0));
+  mk("RMS jerk", meanStd(o.mean_rms_jerk, o.std_rms_jerk, 0),
+     "disc μ " + fmt(o.mean_discontinuities, 1));
+  mk("Total duration", durFmt(o.total_duration_s),
+     "μ " + meanStd(o.mean_duration_s, o.std_duration_s, 1) + "s / ep");
+  mk("Data size", bytesFmt(o.total_bytes));
+}
+
+// ---- episodes table ------------------------------------------------------------
+const COLS = [
+  { k: "_task", n: "task", txt: true }, { k: "session", n: "session", txt: true },
+  { k: "frames", n: "frames" }, { k: "duration_s", n: "dur", f: durFmt },
+  { k: "vision", n: "vision", st: true },
+  { k: "smoothness_score", n: "smooth", f: v => fmt(v, 1) },
+  { k: "rms_jerk", n: "jerk", f: v => fmt(v, 1) },
+  { k: "discontinuities", n: "disc" },
+  { k: "aesthetics", n: "aesth", f: v => fmt(v, 1) },
+  { k: "sharpness_mean", n: "sharp", f: v => fmt(v, 0) },
+  { k: "brightness_mean", n: "bright", f: v => fmt(v, 0) },
+  { k: "bytes", n: "size", f: bytesFmt }, { k: "warnings", n: "warn" },
+];
+function epTable(tableEl, allRows, onSelect) {
+  let sortK = null, sortDir = 1;
+  const thead = el("thead", {}, tableEl), thr = el("tr", {}, thead);
+  const thChk = el("th", { class: "chk" }, thr);
+  const masterChk = el("input", { type: "checkbox", title: "Select all" }, thChk);
+  masterChk.onchange = () => {
+    checked.clear();
+    if (masterChk.checked) for (const r of allRows) checked.add(r);
+    render();
+    syncDelBar();
+  };
+  for (const c of COLS) {
+    const th = el("th", c.txt ? { class: "txt" } : {}, thr, c.n);
+    const ar = el("span", { class: "arrow" }, th, "");
+    th.onclick = () => {
+      sortDir = (sortK === c.k) ? -sortDir : 1; sortK = c.k;
+      for (const o of thr.children) o.querySelector(".arrow").textContent = "";
+      ar.textContent = sortDir > 0 ? " ▲" : " ▼";
+      render();
+    };
+  }
+  const tbody = el("tbody", {}, tableEl);
+  function render() {
+    const rows = allRows.slice();
+    if (sortK) rows.sort((a, b) => {
+      const x = a[sortK], y = b[sortK];
+      if (x == null) return 1; if (y == null) return -1;
+      return (x < y ? -1 : x > y ? 1 : 0) * sortDir;
+    });
+    tbody.textContent = "";
+    for (const r of rows) {
+      const tr = el("tr", { class: "clickable" }, tbody);
+      if (r === selectedRow) tr.classList.add("selected");
+      if (checked.has(r)) tr.classList.add("marked-del");
+      const tdChk = el("td", { class: "chk" }, tr);
+      const cb = el("input", { type: "checkbox" }, tdChk);
+      cb.checked = checked.has(r);
+      cb.onclick = evt => {
+        evt.stopPropagation();
+        if (cb.checked) checked.add(r); else checked.delete(r);
+        syncDelBar(); render();
+      };
+      for (const c of COLS) {
+        const td = el("td", c.txt ? { class: "txt" } : {}, tr);
+        if (c.st) {
+          const st = statusOf(r[c.k]);
+          const w = el("span", { class: "status" }, td);
+          el("span", { class: "swatch", style: "background:" + css(STATUS[st]) }, w);
+          w.appendChild(document.createTextNode(r[c.k] || "–"));
+        } else td.textContent = (c.f || fmt)(r[c.k]);
+      }
+      tr.onclick = () => { selectedRow = r; onSelect(r); render(); };
+    }
+    masterChk.checked = allRows.length > 0 && checked.size === allRows.length;
+    masterChk.indeterminate = checked.size > 0 && checked.size < allRows.length;
+  }
+  render();
+  return { select: r => { selectedRow = r; render(); }, render };
+}
+
+// ---- episode detail drawer --------------------------------------------------
+const drawer = document.getElementById("detailDrawer");
+function openDetail(row) {
+  selectedRow = row;
+  hideTip();
+  renderDetail(row);
+  drawer.classList.add("open");
+  drawer.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  if (tblCtl) tblCtl.select(row);
+}
+function closeDetail() {
+  drawer.classList.remove("open");
+  drawer.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+document.getElementById("drawerClose").onclick = closeDetail;
+document.getElementById("drawerBackdrop").onclick = closeDetail;
+document.addEventListener("keydown", evt => {
+  if (evt.key === "Escape" && drawer.classList.contains("open")) closeDetail();
+});
+
+function renderDetail(row) {
+  const box = document.getElementById("detail");
+  box.textContent = "";
+  document.getElementById("detailName").textContent =
+    row ? " — " + row._task + " · " + row.session : "";
+  if (!row) {
+    el("div", { class: "card chart-sub" }, box, "No episode selected");
+    return;
+  }
+  if (API_OK) {
+    const head = el("div", { class: "del-bar", style: "margin-bottom:10px" }, box);
+    const vbtn = el("button", { class: "vid-btn" }, head, "View video");
+    const btn = el("button", { class: "del-btn" }, head,
+                   "Delete this episode");
+    btn.onclick = () => deleteEpisodes([row]);
+    const vwrap = el("div", { class: "card vid-wrap", style: "display:none" }, box);
+    vbtn.onclick = () => toggleVideo(vbtn, vwrap, row);
+  }
+  const tl = el("div", { class: "tiles", style: "margin-bottom:12px" }, box);
+  const mk = (l, v, aux) => {
+    const t = el("div", { class: "tile" }, tl);
+    el("div", { class: "lbl" }, t, l); el("div", { class: "val" }, t, v);
+    if (aux) el("div", { class: "aux" }, t, aux);
+  };
+  const d = row.detail;
+  if (!d) {
+    mk("Vision", row.vision || "–");
+    mk("Smoothness", fmt(row.smoothness_score, 1),
+       "jerk " + fmt(row.rms_jerk, 1) + " · disc " + fmt(row.discontinuities, 0));
+    mk("Aesthetics", fmt(row.aesthetics, 1));
+    mk("Sharpness", fmt(row.sharpness_mean, 0),
+       "brightness " + fmt(row.brightness_mean, 0));
+    mk("Frames", fmt(row.frames, 0), durFmt(row.duration_s));
+    el("div", { class: "card chart-sub" }, box,
+       "No embedded chart series for this episode (only the newest N keep curves). "
+       + "No embedded curves; table metrics are still available.");
+    return;
+  }
+  const sm = d.smoothness || {}, ae = d.aesthetics || {};
+  mk("Smoothness", fmt(sm.score, 1),
+     "rms jerk " + fmt((sm.rms_jerk || {}).overall, 1) + " · disc " + fmt(sm.discontinuity_count, 0));
+  mk("Aesthetics", fmt(ae.model_score != null ? ae.model_score : ae.score, 1),
+     ae.model_name ? ae.model_name : "heuristic");
+  mk("Frames", fmt(d.frames, 0), durFmt(d.duration_s));
+  mk("Path length (joints)", fmt((d.action || {}).path_length_rad, 1) + " rad");
+
+  // per-dimension action statistics (mean/variance) — the numbers themselves
+  if (d.action && d.action.per_dim && d.action.per_dim.mean) {
+    const pd = d.action.per_dim;
+    const acard = el("div", { class: "card scroll-x" }, box);
+    el("span", { class: "chart-title" }, acard, "Action stats");
+    el("span", { class: "chart-sub", style: "margin-left:8px" }, acard,
+       "per joint, rad · action == qpos");
+    const DIMS = ["L-J1","L-J2","L-J3","L-J4","L-J5","L-J6","L-grip",
+                  "R-J1","R-J2","R-J3","R-J4","R-J5","R-J6","R-grip"];
+    const t = el("table", { style: "margin-top:8px" }, acard);
+    const hr = el("tr", {}, el("thead", {}, t));
+    el("th", { class: "txt" }, hr, "");
+    for (const n of DIMS) el("th", {}, hr, n);
+    const tb = el("tbody", {}, t);
+    for (const [key, label] of [["mean","mean"],["std","std"],
+                                ["var","var"],
+                                ["min","min"],["max","max"],["range","range"]]) {
+      if (!pd[key]) continue;  // e.g. schema v1 episodes have no "var"
+      const tr = el("tr", {}, tb);
+      el("td", { class: "txt" }, tr, label);
+      for (let i = 0; i < 14; i++) el("td", {}, tr, fmt(pd[key][i], 3));
+    }
+  }
+
+  const grid = el("div", { class: "grid2" }, box);
+  const traj = d.trajectories;
+  if (traj && traj.qpos && traj.qpos.length) {
+    const xs = traj.qpos.map((_, i) => i * traj.stride / (d.fps || FPS));
+    const armSeries = dims => dims.map((dim, k) => ({
+      name: "J" + (k + 1), color: css(SLOTS[k]), ys: traj.qpos.map(q => q[dim]) }));
+    lineChart(grid, { title: "Left arm joints", sub: "rad", xName: "t (s)",
+                      xs, series: armSeries([0, 1, 2, 3, 4, 5]) });
+    lineChart(grid, { title: "Right arm joints", sub: "rad", xName: "t (s)",
+                      xs, series: armSeries([7, 8, 9, 10, 11, 12]) });
+    const grip = d.action && d.action.gripper;
+    lineChart(grid, { title: "Grippers", xName: "t (s)",
+      sub: grip ? ("L open/close " + grip.left.open_count + "/" + grip.left.close_count +
+                   " · R " + grip.right.open_count + "/" + grip.right.close_count) : "rad",
+      xs, series: [{ name: "left", color: css(SLOTS[0]), ys: traj.qpos.map(q => q[6]) },
+                   { name: "right", color: css(SLOTS[1]), ys: traj.qpos.map(q => q[13]) }], h: 140 });
+  }
+  if (sm.series) {
+    const s = sm.series, fps = d.fps || FPS;
+    const xsv = s.vel_norm_left.map((_, i) => i * s.stride / fps);
+    const marks = (s.discontinuity_frames || []).map(f => f / fps);
+    lineChart(grid, { title: "Joint speed", sub: "‖v‖ rad/s", xName: "t (s)", xs: xsv,
+      series: [{ name: "left", color: css(SLOTS[0]), ys: s.vel_norm_left },
+               { name: "right", color: css(SLOTS[1]), ys: s.vel_norm_right }], h: 150, markX: marks });
+    const xsj = s.jerk_norm_left.map((_, i) => i * s.stride / fps);
+    lineChart(grid, { title: "Jerk", sub: "‖j‖ rad/s³ · red dashes = discontinuities",
+      xName: "t (s)", xs: xsj,
+      series: [{ name: "left", color: css(SLOTS[0]), ys: s.jerk_norm_left },
+               { name: "right", color: css(SLOTS[1]), ys: s.jerk_norm_right }], h: 150, markX: marks });
+  }
+  const iq = d.image_quality;
+  if (iq && iq.cameras) {
+    const cams = Object.keys(iq.cameras);
+    const mkIQ = (metric, title, sub) => {
+      const first = iq.cameras[cams[0]][metric];
+      if (!first || !first.series) return;
+      const xs = first.series.map((_, i) => i * iq.stride / (d.fps || FPS));
+      lineChart(grid, { title, sub, xName: "t (s)", xs,
+        series: cams.map((c, i) => ({ name: c, color: css(SLOTS[i % SLOTS.length]),
+                                      ys: iq.cameras[c][metric].series })), h: 150 });
+    };
+    mkIQ("sharpness", "Sharpness", "Laplacian variance");
+    mkIQ("brightness", "Brightness", "0–255");
+    const chipsCard = el("div", { class: "card" }, box);
+    el("span", { class: "chart-title" }, chipsCard, "Exposure & blur");
+    const chips = el("div", { class: "chips" }, chipsCard);
+    for (const c of cams) {
+      const cc = iq.cameras[c];
+      const chip = el("span", { class: "chip" }, chips);
+      el("b", {}, chip, c);
+      chip.appendChild(document.createTextNode(
+        " · over " + pct(cc.overexposed_frac) + " · under " + pct(cc.underexposed_frac) +
+        " · blur " + pct(cc.blur_frac) +
+        (cc.depth_fill_rate != null ? " · depth fill " + pct(cc.depth_fill_rate) : "")));
+    }
+  }
+}
+
+// ---- histograms ---------------------------------------------------------------
+function histogram(parent, title, values, fmtF, unit) {
+  const vals = values.filter(v => v != null);
+  const { body, card } = chartCard(parent, title, unit);
+  if (!vals.length) { el("div", { class: "chart-sub" }, body, "no data"); return; }
+  const lo = Math.min(...vals), hi = Math.max(...vals);
+  const nb = Math.min(10, Math.max(4, Math.round(Math.sqrt(vals.length) * 2)));
+  const w = (hi - lo) / nb || 1;
+  const bins = new Array(nb).fill(0);
+  for (const v of vals) bins[Math.min(nb - 1, Math.floor((v - lo) / w))]++;
+  card._setTable(wr => seriesTable(wr, "bin", bins.map((_, i) => fmtF(lo + i * w) + "–" + fmtF(lo + (i + 1) * w)),
+    [{ name: "count", ys: bins }], v => v, v => fmt(v, 0)));
+  const W = 300, H = 130, m = { l: 8, r: 8, t: 8, b: 20 };
+  const svg = sv("svg", { viewBox: "0 0 " + W + " " + H }, body);
+  const maxC = Math.max(...bins, 1);
+  const bw = Math.min(24, (W - m.l - m.r) / nb - 2);
+  bins.forEach((c, i) => {
+    const x = m.l + (W - m.l - m.r) * i / nb;
+    const h = (H - m.t - m.b) * c / maxC;
+    const r = sv("rect", { x, y: H - m.b - h, width: bw, height: Math.max(h, 1), rx: 3,
+                           fill: css("--seq") }, svg);
+    r.addEventListener("pointermove", evt => showTip(evt,
+      fmtF(lo + i * w) + " – " + fmtF(lo + (i + 1) * w),
+      [{ name: "episodes", value: String(c), color: css("--seq") }]));
+    r.addEventListener("pointerleave", hideTip);
+  });
+  sv("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: css("--axis") }, svg);
+  const t0 = sv("text", { x: m.l, y: H - 6, "font-size": 10, fill: css("--muted") }, svg);
+  t0.textContent = fmtF(lo);
+  const t1 = sv("text", { x: W - m.r, y: H - 6, "text-anchor": "end", "font-size": 10,
+                          fill: css("--muted") }, svg);
+  t1.textContent = fmtF(hi);
+}
+
+// ---- training scaling curve ----------------------------------------------------
+function renderTraining(tr) {
+  if (!tr || ((!tr.curve || !tr.curve.length) && (!tr.runs || !tr.runs.length))) return;
+  document.getElementById("trainSection").style.display = "";
+  const grid = document.getElementById("scalingCurve");
+  const curve = tr.curve || [];
+  if (curve.length) {
+    const xs = curve.map(c => c.milestone);
+    lineChart(grid, { title: "Policy success rate",
+      sub: "real-robot rollouts vs training episodes",
+      xName: "episodes", xs, xFmt: v => fmt(v, 0), yFmt: pct, dots: true,
+      series: [{ name: "success rate", color: css("--s2"),
+                 ys: curve.map(c => c.success_rate) }], h: 200 });
+    if (curve.some(c => c.best_val_loss != null))
+      lineChart(grid, { title: "Best val loss", sub: "secondary metric for reference",
+        xName: "episodes", xs, xFmt: v => fmt(v, 0), yFmt: v => fmt(v, 3), dots: true,
+        series: [{ name: "val loss", color: css("--s5"),
+                   ys: curve.map(c => c.best_val_loss) }], h: 200 });
+  }
+  const evByM = {};
+  for (const c of curve) evByM[c.milestone] = c;
+  const t = document.getElementById("runTable");
+  const hr = el("tr", {}, el("thead", {}, t));
+  for (const n of ["milestone", "run", "status", "episodes", "val loss",
+                   "trials", "success rate", "evaluated at"])
+    el("th", n === "run" ? { class: "txt" } : {}, hr, n);
+  const tb = el("tbody", {}, t);
+  const runs = (tr.runs || []).slice()
+    .sort((a, b) => (a.milestone || 0) - (b.milestone || 0));
+  for (const r of runs) {
+    const e = evByM[r.milestone] || {};
+    const trw = el("tr", {}, tb);
+    el("td", {}, trw, fmt(r.milestone, 0));
+    el("td", { class: "txt" }, trw, r.run_id || "–");
+    const st = r.status === "done" ? "success" : r.status === "failed" ? "failed" : "unknown";
+    const w = el("span", { class: "status" }, el("td", {}, trw));
+    el("span", { class: "swatch", style: "background:" + css(STATUS[st]) }, w);
+    w.appendChild(document.createTextNode(r.status || "–"));
+    el("td", {}, trw, fmt(r.num_episodes, 0));
+    el("td", {}, trw, fmt(r.best_val_loss, 3));
+    el("td", {}, trw, e.trials != null ? fmt(e.trials, 0) : "–");
+    el("td", {}, trw, e.success_rate != null ?
+       pct(e.success_rate) + (e.unknowns ? " (" + e.unknowns + "?)" : "") : "–");
+    el("td", {}, trw, e.evaluated_at || "–");
+  }
+}
+
+// ---- episode video -----------------------------------------------------------
+function toggleVideo(btn, wrap, row) {
+  if (wrap._loaded) {
+    const show = wrap.style.display === "none";
+    wrap.style.display = show ? "" : "none";
+    btn.textContent = show ? "Hide video" : "View video";
+    return;
+  }
+  wrap._loaded = true;
+  wrap.style.display = "";
+  btn.textContent = "Hide video";
+  const sub = el("div", { class: "chart-sub", style: "margin-bottom:6px" }, wrap,
+    "3 cameras side-by-side (rendered on first open; may take a few seconds)");
+  const url = "/api/video?task=" + encodeURIComponent(row._task) +
+              "&session=" + encodeURIComponent(row.session);
+  const v = el("video", { controls: "", preload: "metadata", playsinline: "" }, wrap);
+  v.onerror = () => {
+    sub.className = "del-hint warn";
+    sub.textContent = "Video failed to load (render error or session has no image frames). " +
+      "video failed to load — render error or no image frames.";
+    v.remove();
+  };
+  v.src = url;
+}
+
+// ---- delete + full re-render -------------------------------------------------
+const delBtn = document.getElementById("delBtn");
+const delHint = document.getElementById("delHint");
+
+function syncDelBar() {
+  const n = checked.size;
+  delBtn.disabled = !API_OK || n === 0;
+  delBtn.textContent = n ? ("Delete " + n + " selected") : "Delete selected";
+  if (!API_OK) {
+    delHint.className = "del-hint warn";
+    delHint.textContent = "Deletion requires serve_report.py · run: python serve_report.py";
+  } else {
+    delHint.className = "del-hint";
+    delHint.textContent = n ? "Will permanently delete session directories on disk (irreversible)" : "";
+  }
+}
+
+async function deleteEpisodes(rows) {
+  if (!API_OK || !rows.length) return;
+  const labels = rows.map(r => r._task + "/" + r.session);
+  if (!confirm("Permanently delete the following " + rows.length + " episode(s)?\n\n" + labels.join("\n")
+               + "\n\nSession directories on disk will be rm -rf'd and cannot be recovered.")) return;
+  delBtn.disabled = true;
+  delHint.textContent = "Deleting…";
+  try {
+    const res = await fetch("/api/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: rows.map(r => ({ task: r._task, session: r.session })) }),
+    });
+    const out = await res.json();
+    if (!out.ok) {
+      const msg = (out.errors || []).map(e => e.item + ": " + e.error).join("\n")
+                  || out.regen_error || "delete failed";
+      alert("Delete failed:\n" + msg);
+      return;
+    }
+    if (!out.report_regenerated) {
+      alert("Deleted " + out.deleted.length + " episode(s), but report regen failed:\n" + (out.regen_error || ""));
+    }
+    location.reload();
+  } catch (e) {
+    alert("Request failed: " + e);
+  } finally {
+    syncDelBar();
+  }
+}
+delBtn.onclick = () => deleteEpisodes([...checked]);
+
+// ---- assemble ------------------------------------------------------------------
+function collectRows(data) {
+  const rows = [];
+  for (const t of Object.keys(data.tasks || {}))
+    for (const r of data.tasks[t].episodes) { r._task = t; rows.push(r); }
+  rows.sort((a, b) => (a.generated_at || "") < (b.generated_at || "") ? -1 : 1);
+  return rows;
+}
+
+function renderAll(data) {
+  document.getElementById("meta").textContent =
+    (data.dataset_dir || "") + " · generated " + (data.generated_at || "–");
+  const kpis = document.getElementById("kpis");
+  kpis.textContent = "";
+  tiles(kpis);
+  const tb = document.getElementById("taskBars");
+  tb.textContent = "";
+  taskBars(tb);
+  const stripEl = document.getElementById("strip");
+  stripEl.textContent = "";
+  const allRows = collectRows(data);
+  strip(stripEl, allRows);
+  const epTbl = document.getElementById("epTable");
+  epTbl.textContent = "";
+  // Keep prior selection highlight if still present; do not auto-open the drawer.
+  if (selectedRow && !allRows.includes(selectedRow)) selectedRow = null;
+  tblCtl = epTable(epTbl, allRows, openDetail);
+  if (drawer.classList.contains("open") && selectedRow) renderDetail(selectedRow);
+  else closeDetail();
+  const hists = document.getElementById("hists");
+  hists.textContent = "";
+  histogram(hists, "Smoothness",
+            allRows.map(r => r.smoothness_score), v => fmt(v, 0), "score 0–100");
+  histogram(hists, "Aesthetics",
+            allRows.map(r => r.aesthetics), v => fmt(v, 0), "score 0–100");
+  histogram(hists, "Sharpness",
+            allRows.map(r => r.sharpness_mean), v => fmt(v, 0), "Laplacian var");
+  histogram(hists, "Brightness",
+            allRows.map(r => r.brightness_mean), v => fmt(v, 0), "0–255");
+  histogram(hists, "Duration",
+            allRows.map(r => r.duration_s), v => fmt(v, 0), "seconds");
+  histogram(hists, "RMS jerk",
+            allRows.map(r => r.rms_jerk), v => fmt(v, 0), "rad/s³");
+  document.getElementById("trainSection").style.display = "none";
+  renderTraining(data.training);
+  document.getElementById("foot").textContent =
+    "episode_stats schema v" + (data.schema_version || "?") +
+    " · full charts kept for the newest episodes only (--embed-series-max)";
+  syncDelBar();
+}
+
+renderAll(D);
+})();
+</script>
+</body>
+</html>
