@@ -4,269 +4,196 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PhysGnosis: A Human-Robot Symbiotic System for Physical-World Interaction</title>
-<meta name="description" content="PhysGnosis — a human-robot symbiotic agentic system in which the robot improves under natural-language guidance. Correct it once; it never asks again.">
+<meta name="description" content="PhysGnosis — a human-robot symbiotic agentic system. The robot collects data autonomously and asks for help in natural language. Correct it once; it never asks again.">
 <meta property="og:title" content="PhysGnosis: A Human-Robot Symbiotic System for Physical-World Interaction">
-<meta property="og:description" content="Autonomous data collection with persistent natural-language corrections. Matches full teleoperation success at ~10% of the human time.">
+<meta property="og:description" content="Matches full-teleoperation collection success with 16% of the human working time. Policies trained on its data match teleoperation data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* ============ Tokens ============
-     Color encodes system state (from Fig. 2 of the paper):
-     blue  = autonomous operation
-     amber = Alert / human intervention
-     green = verified / success
-  */
   :root{
-    --paper:#FBFBFC;
-    --ink:#171A21;
-    --ink-soft:#4B5162;
-    --line:#E4E6EC;
-    --auto:#2451D8;      /* autonomous */
-    --auto-soft:#EAF0FF;
-    --alert:#DE9A0A;     /* human intervention */
-    --alert-soft:#FCF3DC;
-    --verified:#188A5F;  /* verified success */
-    --verified-soft:#E4F4EC;
+    --ink:#1a1a1a;
+    --soft:#555;
+    --line:#e7e7e7;
+    --accent:#2451d8;
+    --alert:#b07a00;
+    --alert-soft:#fcf3dc;
+    --ok:#188a5f;
+    --ok-soft:#e4f4ec;
     --mono:'IBM Plex Mono',ui-monospace,monospace;
     --serif:'Source Serif 4',Georgia,serif;
-    --disp:'Schibsted Grotesk',system-ui,sans-serif;
-    --col:860px;
+    --sans:'Noto Sans',system-ui,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{animation:none!important;transition:none!important}}
-  body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.65;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:var(--col);margin:0 auto;padding:0 24px}
-  a{color:var(--auto);text-decoration:none}
+  body{background:#fff;color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px}
+  a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
-  :focus-visible{outline:2px solid var(--auto);outline-offset:2px;border-radius:2px}
 
-  h1,h2,h3,.disp{font-family:var(--disp)}
-  h2{font-size:26px;font-weight:700;letter-spacing:-.01em;margin:0 0 14px}
-  h3{font-size:19px;font-weight:700;margin:0 0 8px}
-  section{padding:52px 0;border-top:1px solid var(--line)}
-  section.no-rule{border-top:none}
-  p+p{margin-top:14px}
-  .muted{color:var(--ink-soft)}
-
-  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:10px}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,4.6vw,44px);line-height:1.15;letter-spacing:-.01em}
+  h2{font-family:var(--serif);font-weight:600;font-size:28px;text-align:center;margin-bottom:18px}
+  section{padding:44px 0}
+  section + section{border-top:1px solid var(--line)}
+  .center{text-align:center}
+  .muted{color:var(--soft)}
+  .caption{font-size:14.5px;color:var(--soft);text-align:center;margin-top:10px}
 
   /* ============ Hero ============ */
-  header{padding:64px 0 44px;text-align:center}
-  .org{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
-  h1{font-size:clamp(34px,5.4vw,54px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin:16px auto 10px;max-width:820px}
-  h1 .claw{color:var(--auto)}
-  .tagline{font-family:var(--disp);font-size:clamp(18px,2.6vw,23px);font-weight:500;color:var(--ink-soft);margin:0 0 26px}
-  .tagline b{color:var(--ink);font-weight:700}
-  .authors{font-size:17px;line-height:1.8;max-width:640px;margin:0 auto}
-  .authors sup{font-size:11px;color:var(--ink-soft)}
-  .affils{font-size:15px;color:var(--ink-soft);margin-top:6px}
-  .btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:26px}
-  .btn{font-family:var(--disp);font-weight:700;font-size:15px;padding:10px 20px;border-radius:99px;background:var(--ink);color:#fff;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease}
+  header{padding:56px 0 8px;text-align:center}
+  .venue{font-family:var(--mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);margin-bottom:18px}
+  .authors{font-size:16.5px;line-height:1.9;max-width:760px;margin:22px auto 0}
+  .authors sup{font-size:11px;color:var(--soft)}
+  .affils{font-size:14.5px;color:var(--soft);margin-top:8px;line-height:1.7}
+  .eqnote{font-size:13px;color:var(--soft);margin-top:6px}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:24px}
+  .btn{font-weight:700;font-size:15px;padding:9px 20px;border-radius:99px;background:var(--ink);color:#fff;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease}
   .btn:hover{text-decoration:none;transform:translateY(-1px)}
-  .btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
   .btn svg{width:15px;height:15px}
+  .tagline{font-family:var(--serif);font-size:clamp(18px,2.4vw,22px);color:var(--soft);margin-top:28px}
+  .tagline b{color:var(--ink)}
 
-  /* hero loop diagram */
-  .heroloop{margin:44px auto 0;max-width:760px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:26px 22px 20px;box-shadow:0 1px 3px rgba(23,26,33,.05)}
-  .loopline{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:13.5px;font-weight:500}
-  .chip{padding:7px 14px;border-radius:99px;border:1.5px solid;white-space:nowrap}
-  .chip.a{border-color:var(--auto);color:var(--auto);background:var(--auto-soft)}
-  .chip.h{border-color:var(--alert);color:#9a6b00;background:var(--alert-soft)}
-  .chip.v{border-color:var(--verified);color:var(--verified);background:var(--verified-soft)}
-  .arrow{color:var(--ink-soft)}
-  .loopcap{font-size:14.5px;color:var(--ink-soft);text-align:center;margin-top:14px;line-height:1.55}
-  .legend{display:flex;gap:18px;justify-content:center;margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);flex-wrap:wrap}
-  .legend span{display:inline-flex;align-items:center;gap:6px}
-  .dot{width:9px;height:9px;border-radius:99px;display:inline-block}
+  /* ============ Video / figure placeholders ============ */
+  .vid{aspect-ratio:16/9;border-radius:10px;background:repeating-linear-gradient(45deg,#f4f4f6 0 12px,#eeeef2 12px 24px);border:1px dashed #c9cdd8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--soft);font-family:var(--mono);font-size:12px;text-align:center;padding:10px}
+  .vid .play{width:40px;height:40px;border-radius:99px;background:#fff;border:1px solid var(--line);display:grid;place-items:center}
+  .teaser{margin-top:34px}
+  .teaser .vid{aspect-ratio:16/8}
+  .vidgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+  .vidgrid.two{grid-template-columns:repeat(2,1fr)}
+  .vidgrid .vid{aspect-ratio:16/10}
+  @media(max-width:680px){.vidgrid,.vidgrid.two{grid-template-columns:1fr}}
+  .figph{border:1px dashed #c9cdd8;border-radius:10px;padding:44px 20px;text-align:center;font-family:var(--mono);font-size:12.5px;color:var(--soft)}
 
   /* ============ Stat band ============ */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:34px}
-  .stat{background:#fff;padding:20px 16px;text-align:center}
-  .stat .n{font-family:var(--disp);font-size:clamp(24px,3.4vw,34px);font-weight:800;letter-spacing:-.02em}
-  .stat .n.v{color:var(--verified)} .stat .n.a{color:var(--auto)}
-  .stat .l{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px;line-height:1.5}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:30px}
+  .stat{background:#fff;padding:20px 14px;text-align:center}
+  .stat .n{font-family:var(--serif);font-size:clamp(24px,3.2vw,32px);font-weight:700}
+  .stat .n.a{color:var(--accent)} .stat .n.g{color:var(--ok)}
+  .stat .l{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);margin-top:5px;line-height:1.5}
   @media(max-width:680px){.stats{grid-template-columns:repeat(2,1fr)}}
 
-  /* ============ Video placeholders ============ */
-  .vidgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
-  .vidgrid.two{grid-template-columns:repeat(2,1fr)}
-  @media(max-width:680px){.vidgrid,.vidgrid.two{grid-template-columns:1fr}}
-  .vid{aspect-ratio:16/10;border-radius:12px;background:
-      repeating-linear-gradient(45deg,#F2F3F6 0 12px,#EDEFF3 12px 24px);
-      border:1px dashed #C9CDD8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--ink-soft);font-family:var(--mono);font-size:12px;text-align:center;padding:10px}
-  .vid .play{width:38px;height:38px;border-radius:99px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink)}
-  .vidcap{font-size:14.5px;color:var(--ink-soft);margin-top:8px;text-align:center}
-
-  /* ============ Timeline (Fig. 2) ============ */
-  .tl{margin-top:22px;border:1px solid var(--line);border-radius:14px;background:#fff;padding:24px 22px}
-  .tlrow{display:grid;grid-template-columns:120px 1fr 64px;align-items:center;gap:14px;margin-bottom:18px}
-  .tlrow:last-of-type{margin-bottom:6px}
-  .tlname{font-family:var(--disp);font-weight:700;font-size:14.5px;line-height:1.25}
-  .tlname small{display:block;font-family:var(--mono);font-weight:400;font-size:11px;color:var(--ink-soft);margin-top:2px}
-  .track{position:relative;height:26px;background:#F3F4F7;border-radius:6px;overflow:visible}
-  .seg{position:absolute;top:0;height:100%;border-radius:6px}
-  .seg.h{background:var(--alert)}
-  .seg.idle{background:#DDDFE6}
-  .seg.auto{background:var(--auto)}
-  .seg.script{background:#7B87A6}
-  .tick{position:absolute;top:-5px;width:12px;height:36px;display:grid;place-items:center}
-  .tick i{width:12px;height:12px;border-radius:99px;background:var(--alert);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--alert)}
-  .tlmin{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);text-align:right}
-  .tlkey{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-  @media(max-width:640px){.tlrow{grid-template-columns:86px 1fr 52px}}
-
   /* ============ Tables ============ */
-  table{width:100%;border-collapse:collapse;font-size:15px;margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  caption{caption-side:top;text-align:left;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);padding-bottom:8px}
-  th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;font-size:15px;margin:18px auto 0}
+  th,td{padding:9px 12px;text-align:center;border-bottom:1px solid var(--line)}
   th:first-child,td:first-child{text-align:left}
-  thead th{font-family:var(--disp);font-size:13px;font-weight:700;background:#F5F6F9}
-  tbody tr:last-child td{border-bottom:none}
-  td.ours{font-weight:600;color:var(--auto)}
-  tr.ours-row{background:var(--auto-soft)}
+  thead th{font-size:13px;font-weight:700;border-bottom:2px solid var(--ink)}
+  td.ours,th.ours{font-weight:700;color:var(--accent)}
   .tablewrap{overflow-x:auto}
 
-  /* ============ Bars (Table 5) ============ */
-  .bars{margin-top:18px;display:flex;flex-direction:column;gap:12px}
-  .bar{display:grid;grid-template-columns:230px 1fr 56px;align-items:center;gap:12px}
-  @media(max-width:640px){.bar{grid-template-columns:130px 1fr 48px}}
-  .bar .bl{font-size:14.5px;line-height:1.3}
-  .bar .btrack{height:20px;background:#F3F4F7;border-radius:5px;overflow:hidden}
-  .bar .bfill{height:100%;border-radius:5px;background:#B9C2D6}
-  .bar.hl .bfill{background:var(--auto)}
-  .bar.tel .bfill{background:#5E6B8C}
+  /* ============ Bars ============ */
+  .bars{margin-top:24px;display:flex;flex-direction:column;gap:11px;max-width:640px;margin-left:auto;margin-right:auto}
+  .bar{display:grid;grid-template-columns:210px 1fr 52px;align-items:center;gap:12px}
+  @media(max-width:640px){.bar{grid-template-columns:120px 1fr 46px}}
+  .bar .bl{font-size:14px;line-height:1.3}
+  .bar .btrack{height:18px;background:#f3f4f7;border-radius:4px;overflow:hidden}
+  .bar .bfill{height:100%;background:#b9c2d6}
+  .bar.hl .bfill{background:var(--accent)}
   .bar .bv{font-family:var(--mono);font-size:13px;text-align:right}
-  .bar.hl .bl,.bar.hl .bv{font-weight:600;color:var(--auto)}
+  .bar.hl .bl,.bar.hl .bv{font-weight:700;color:var(--accent)}
 
   /* ============ Interactive demo ============ */
-  .demo{margin-top:20px;border:1.5px solid var(--ink);border-radius:16px;overflow:hidden;background:#fff}
-  .demo-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:12.5px}
+  .demo{margin-top:22px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+  .demo-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 16px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:12.5px}
   .demo-head .st{display:inline-flex;align-items:center;gap:8px}
-  .pulse{width:9px;height:9px;border-radius:99px;background:var(--auto)}
-  .pulse.alert{background:var(--alert);animation:pulse 1s infinite}
-  .pulse.done{background:var(--verified)}
+  .pulse{width:9px;height:9px;border-radius:99px;background:var(--accent)}
+  .pulse.alert{background:#de9a0a;animation:pulse 1s infinite}
+  .pulse.done{background:var(--ok)}
   @keyframes pulse{50%{opacity:.35}}
-  .demo-body{display:grid;grid-template-columns:1.25fr 1fr;min-height:340px}
+  .demo-body{display:grid;grid-template-columns:1.25fr 1fr;min-height:300px}
   @media(max-width:720px){.demo-body{grid-template-columns:1fr}}
-  .log{padding:16px 18px;border-right:1px solid var(--line);font-family:var(--mono);font-size:13px;line-height:1.7;overflow-y:auto;max-height:420px}
+  .log{padding:14px 16px;border-right:1px solid var(--line);font-family:var(--mono);font-size:12.5px;line-height:1.7;overflow-y:auto;max-height:380px}
   @media(max-width:720px){.log{border-right:none;border-bottom:1px solid var(--line)}}
   .log .ln{opacity:0;animation:fadein .35s forwards}
   @keyframes fadein{to{opacity:1}}
-  .ln .t{color:var(--ink-soft)}
-  .ln.auto b{color:var(--auto)} .ln.ok b{color:var(--verified)} .ln.warn b{color:#9a6b00}
-  .ln.op{color:#9a6b00}
-  .memory{padding:16px 18px;background:#FCFCFD}
-  .memory h4{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px}
-  .mem-empty{font-family:var(--mono);font-size:12.5px;color:#A6ABB8;border:1px dashed var(--line);border-radius:8px;padding:14px;text-align:center}
-  .mem-entry{font-family:var(--mono);font-size:12px;line-height:1.6;border:1px solid var(--verified);background:var(--verified-soft);border-radius:8px;padding:10px 12px;margin-bottom:10px;animation:fadein .4s}
-  .mem-entry .k{color:var(--verified);font-weight:600}
-  .demo-foot{border-top:1px solid var(--line);padding:14px 18px}
-  .prompt-label{font-family:var(--mono);font-size:12px;color:#9a6b00;margin-bottom:8px}
+  .ln .t{color:var(--soft)}
+  .ln.auto b{color:var(--accent)} .ln.ok b{color:var(--ok)} .ln.warn b{color:var(--alert)}
+  .ln.op{color:var(--alert)}
+  .memory{padding:14px 16px;background:#fafafb}
+  .memory h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+  .mem-empty{font-family:var(--mono);font-size:12px;color:#a6abb8;border:1px dashed var(--line);border-radius:8px;padding:14px;text-align:center}
+  .mem-entry{font-family:var(--mono);font-size:11.5px;line-height:1.6;border:1px solid var(--ok);background:var(--ok-soft);border-radius:8px;padding:9px 11px;margin-bottom:10px;animation:fadein .4s}
+  .mem-entry .k{color:var(--ok);font-weight:600}
+  .demo-foot{border-top:1px solid var(--line);padding:13px 16px}
+  .prompt-label{font-family:var(--mono);font-size:12px;color:var(--alert);margin-bottom:8px}
   .choices{display:flex;flex-wrap:wrap;gap:8px}
-  .choice{font-family:var(--mono);font-size:12.5px;padding:8px 13px;border-radius:99px;border:1.5px solid var(--alert);background:var(--alert-soft);color:#7a5500;cursor:pointer;transition:transform .1s}
+  .choice{font-family:var(--mono);font-size:12px;padding:8px 13px;border-radius:99px;border:1.5px solid #de9a0a;background:var(--alert-soft);color:#7a5500;cursor:pointer;transition:transform .1s}
   .choice:hover{transform:translateY(-1px)}
-  .choice:disabled{opacity:.35;cursor:default;transform:none}
-  .runbtn{font-family:var(--disp);font-weight:700;font-size:15px;padding:10px 22px;border-radius:99px;background:var(--auto);color:#fff;border:none;cursor:pointer}
+  .runbtn{font-family:var(--sans);font-weight:700;font-size:15px;padding:9px 22px;border-radius:99px;background:var(--accent);color:#fff;border:none;cursor:pointer}
   .runbtn:disabled{opacity:.4;cursor:default}
-  .democap{font-size:14.5px;color:var(--ink-soft);margin-top:10px}
 
-  /* method figure placeholder */
-  .figph{border:1px dashed #C9CDD8;border-radius:12px;background:#fff;padding:30px;text-align:center;font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);margin-top:16px}
-
-  .todo{font-family:var(--mono);font-size:12px;background:var(--alert-soft);border:1px solid var(--alert);color:#7a5500;border-radius:5px;padding:1px 7px;white-space:nowrap}
-
-  /* bibtex */
-  pre{background:var(--ink);color:#E8EAF2;border-radius:12px;padding:20px;font-family:var(--mono);font-size:13px;line-height:1.6;overflow-x:auto;margin-top:14px}
-  footer{padding:36px 0 60px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-soft);text-align:center}
-
-  /* toc */
-  nav.toc{position:sticky;top:0;background:rgba(251,251,252,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:10}
-  nav.toc .wrap{display:flex;gap:4px;overflow-x:auto;padding-top:10px;padding-bottom:10px}
-  nav.toc a{font-family:var(--mono);font-size:12px;color:var(--ink-soft);padding:5px 12px;border-radius:99px;white-space:nowrap}
-  nav.toc a:hover{background:#EFF0F4;text-decoration:none;color:var(--ink)}
+  pre{background:#f6f6f8;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:18px;font-family:var(--mono);font-size:13px;line-height:1.6;overflow-x:auto;margin-top:16px}
+  footer{padding:32px 0 56px;border-top:1px solid var(--line);font-size:14px;color:var(--soft);text-align:center}
 </style>
 </head>
 <body>
 
 <header class="wrap">
-  <div class="org">GigaAI · 2026</div>
-  <h1>Phys<span class="claw">Gnosis</span>: A Human-Robot Symbiotic System for Physical-World Interaction</h1>
-  <p class="tagline">The robot collects data on its own and asks for help in plain language.<br><b>Correct it once — it never asks about that failure again.</b></p>
+  <div class="venue">GigaAI · 2026</div>
+  <h1>PhysGnosis: A Human-Robot Symbiotic System for Physical-World Interaction</h1>
 
   <div class="authors">
-    <a href="#">Boyuan Wang</a><sup>1,2</sup>,
-    <a href="#">Zhenyuan Zhang</a><sup>1,3</sup>,
-    <a href="#">Zhiqin Yang</a><sup>3</sup>,
-    <a href="#">Guan Huang</a><sup>1</sup>
-    <div class="affils"><sup>1</sup>GigaAI &nbsp; <sup>2</sup>Institute of Automation, CAS &nbsp; <sup>3</sup>HKUST &nbsp; <sup>4</sup>Tsinghua University</div>
+    <a href="#">Boyuan Wang</a><sup>1,2,*</sup>,
+    <a href="#">Zhenyuan Zhang</a><sup>1,3,*</sup>,
+    <a href="#">Zhiqin Yang</a><sup>3,*</sup>,
+    <a href="#">Peijun Gu</a><sup>1,4</sup>,
+    <a href="#">Shuya Wang</a><sup>1,5</sup>,
+    <a href="#">Xiaofeng Wang</a><sup>1,6</sup>,
+    <a href="#">Zheng Zhu</a><sup>1</sup>,
+    <a href="#">Yifan Chang</a><sup>2</sup>,
+    <a href="#">Guosheng Zhao</a><sup>1</sup>,
+    <a href="#">Jiangnan Shao</a><sup>1</sup>,
+    <a href="#">Guan Huang</a><sup>1</sup>,
+    <a href="#">Hengyu Liu</a><sup>7</sup>,
+    <a href="#">Xianghui Ze</a><sup>8</sup>,
+    <a href="#">Yonggang Zhang</a><sup>3</sup>,
+    <a href="#">Wei Xue</a><sup>3</sup>,
+    <a href="#">Yike Guo</a><sup>3</sup>,
+    <a href="#">Xingang Wang</a><sup>2</sup>
   </div>
+  <div class="affils">
+    <sup>1</sup>GigaAI &nbsp; <sup>2</sup>University of Chinese Academy of Sciences &nbsp; <sup>3</sup>HKUST &nbsp; <sup>4</sup>University of Leeds<br>
+    <sup>5</sup>Cornell University &nbsp; <sup>6</sup>Tsinghua University &nbsp; <sup>7</sup>CUHK &nbsp; <sup>8</sup>Nanjing University of Science and Technology
+  </div>
+  <div class="eqnote"><sup>*</sup>Equal contribution</div>
 
   <div class="btns">
     <a class="btn" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm8 1v5h5"/></svg>arXiv</a>
     <a class="btn" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C20.7 4.6 21.7 5 21.7 5c.6 1.6.2 2.8.1 3.1.8.9 1.2 2 1.2 3.2 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>Code</a>
-    <a class="btn alt" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Video</a>
-    <a class="btn alt" href="#bibtex">BibTeX</a>
+    <a class="btn" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Video</a>
+    <a class="btn" href="#bibtex">BibTeX</a>
   </div>
 
-  <div class="heroloop" aria-label="The PhysGnosis loop">
-    <div class="loopline">
-      <span class="chip a">Collect</span><span class="arrow">→</span>
-      <span class="chip a">Verify (VLM)</span><span class="arrow">→</span>
-      <span class="chip a">Reset</span><span class="arrow">→</span>
-      <span class="chip h">Alert&nbsp;→ operator sentence</span><span class="arrow">→</span>
-      <span class="chip v">Corrective Memory</span>
-    </div>
-    <p class="loopcap">PhysGnosis runs a confidence-gated collect–verify–reset loop autonomously. When reliability drops, it pauses and asks a remote operator — in natural language. An LLM parser turns each answer into a persistent rule, so an addressed failure mode, by design, never requires a second correction.</p>
-    <div class="legend">
-      <span><i class="dot" style="background:var(--auto)"></i>autonomous</span>
-      <span><i class="dot" style="background:var(--alert)"></i>human intervention</span>
-      <span><i class="dot" style="background:var(--verified)"></i>verified / retained</span>
-    </div>
+  <p class="tagline">The robot collects data on its own and asks for help in plain language.<br><b>Correct it once — it never asks about that failure again.</b></p>
+
+  <div class="teaser">
+    <div class="vid"><span class="play">▶</span>teaser.mp4 — uncut collect–verify–reset session<br>— drop static/videos/teaser.mp4 —</div>
   </div>
 
   <div class="stats">
-    <div class="stat"><div class="n a">10×</div><div class="l">trajectories per human-minute vs. teleop (16.67 vs 1.67)</div></div>
-    <div class="stat"><div class="n v">40→100%</div><div class="l">verifier accuracy after one language correction</div></div>
-    <div class="stat"><div class="n v">25→65%</div><div class="l">collection success across object categories</div></div>
-    <div class="stat"><div class="n a">87.5%</div><div class="l">zero-shot policy success — above full-teleop data (82.5%)</div></div>
+    <div class="stat"><div class="n a">16%</div><div class="l">human working time vs. teleop (4.8 vs 30.0 min)</div></div>
+    <div class="stat"><div class="n a">6×</div><div class="l">trajectories per human-minute (10.42 vs 1.67)</div></div>
+    <div class="stat"><div class="n g">40→100%</div><div class="l">verifier accuracy after one language correction</div></div>
+    <div class="stat"><div class="n g">80.0%</div><div class="l">policy success — equal to full-teleop data</div></div>
   </div>
 </header>
 
-<nav class="toc" aria-label="Page sections">
-  <div class="wrap">
-    <a href="#rollouts">Rollouts</a>
-    <a href="#demo">Try the loop</a>
-    <a href="#timeline">Human cost</a>
-    <a href="#method">Method</a>
-    <a href="#correction">Language correction</a>
-    <a href="#flywheel">Policy flywheel</a>
-    <a href="#bibtex">BibTeX</a>
-  </div>
-</nav>
-
 <main class="wrap">
 
-<section id="rollouts" class="no-rule">
-  <span class="eyebrow">Autonomous collection rollouts</span>
-  <h2>50 / 50 episodes collected with zero minutes of teleoperation</h2>
-  <p class="muted">On the Desktop Clearing testbed, PhysGnosis matches the 100% collection success of full human teleoperation while the operator types exactly three sentences — from anywhere.</p>
-  <div class="vidgrid">
-    <div class="vid"><span class="play">▶</span>basket_clearing.mp4<br>— drop asset here —</div>
-    <div class="vid"><span class="play">▶</span>basket_reset.mp4<br>— drop asset here —</div>
-    <div class="vid"><span class="play">▶</span>two_basket_sorting.mp4<br>— drop asset here —</div>
-    <div class="vid"><span class="play">▶</span>blue_box_fruit.mp4<br>— drop asset here —</div>
-    <div class="vid"><span class="play">▶</span>alert_and_correction.mp4<br>— drop asset here —</div>
-    <div class="vid"><span class="play">▶</span>session_timelapse.mp4<br>— drop asset here —</div>
-  </div>
-  <p class="vidcap">Uncut collect–verify–reset sessions. Amber flashes mark the moments the system pauses and requests operator input.</p>
+<section>
+  <h2>Abstract</h2>
+  <p class="muted">In existing collection pipelines, the knowledge produced by each human intervention is discarded after the current episode, so recurrent failure modes demand repeated attention. <b style="color:var(--ink)">PhysGnosis</b> is a human-robot symbiotic agentic system: the robot collects, verifies, and resets autonomously, gated by self-assessed confidence, and pauses to ask a remote operator only when reliability drops. The operator answers in natural language; an LLM parser turns each utterance into a structured rule stored in a persistent <b style="color:var(--ink)">Corrective Memory</b>, so an addressed failure mode rarely needs a second correction. On a real-robot desktop-clearing testbed, PhysGnosis matches the collection success of full teleoperation with 16% of the human working time, and policies fine-tuned on its data match those trained on teleoperation data.</p>
 </section>
 
-<section id="demo">
-  <span class="eyebrow">Interactive · play the operator</span>
-  <h2>One sentence, remembered forever</h2>
-  <p>This is the paper's core mechanism, live. Run the collection loop. When the verifier fails repeatedly, the system halts in the <b style="color:#9a6b00">Alert</b> state and asks you for guidance. Pick a correction and watch it persist to Corrective Memory — then notice the same failure never raises an alert again.</p>
+<section>
+  <h2>Method</h2>
+  <p class="muted center">One instruction becomes a plan; collection runs as a confidence-gated collect–verify–reset loop. When retries are exhausted, the system halts, asks the operator in language, and persists the answer to Corrective Memory.</p>
+  <div class="figph" style="margin-top:22px">figure: agent-guided data collection pipeline (Fig. 2) — drop static/images/method.png</div>
+  <p class="caption">Within a session the system changes its behavior through text alone; between sessions the policy changes its weights through data alone.</p>
+</section>
+
+<section>
+  <h2>Try the Loop</h2>
+  <p class="muted center">Play the operator. When the verifier fails repeatedly, the system halts in the <b style="color:var(--alert)">Alert</b> state and asks you. Pick a correction — a persistent rule never alerts again; a one-off nudge does.</p>
 
   <div class="demo">
     <div class="demo-head">
@@ -285,138 +212,91 @@
         <button class="runbtn" id="runBtn">Run collection ▸</button>
       </div>
       <div id="footAlert" style="display:none">
-        <div class="prompt-label">⚠ ALERT — verifier failed 3× · describe the problem in natural language:</div>
+        <div class="prompt-label">⚠ ALERT — verifier failed 3× · describe the problem:</div>
         <div class="choices" id="choices"></div>
       </div>
     </div>
   </div>
-  <p class="democap">A simplified re-enactment of Algorithm 1 with the real correction cases from §4.2: the partial-containment verifier fix and the flat-object grasp-depth rule. In the real system, corrections are free-form sentences parsed by an LLM into trigger / correction / scope entries.</p>
 </section>
 
-<section id="timeline">
-  <span class="eyebrow">Where the human time goes</span>
-  <h2>Same 50 successful episodes, ~0 minutes of teleoperation</h2>
-  <p class="muted">Reproduction of Fig. 2. Bar length is wall-clock time; <span style="color:#b07a00">amber</span> is time a human must be actively engaged. PhysGnosis trades machine minutes, which are cheap, for human minutes, which are not.</p>
-
-  <div class="tl" role="img" aria-label="Timeline comparison: human teleoperation 35 minutes mostly active; scripts 31 minutes with 3 interventions and 70% success; PhysGnosis 53 minutes fully autonomous with 3 typed interventions and 100% success">
-    <div class="tlrow">
-      <div class="tlname">Human teleop<small>100% success</small></div>
-      <div class="track" style="width:66%">
-        <div class="seg h" style="left:0;width:43%"></div>
-        <div class="seg idle" style="left:43%;width:14%"></div>
-        <div class="seg h" style="left:57%;width:43%"></div>
-      </div>
-      <div class="tlmin">35 min</div>
-    </div>
-    <div class="tlrow">
-      <div class="tlname">Scripts<small>70% success</small></div>
-      <div class="track" style="width:58%">
-        <div class="seg script" style="left:0;width:100%"></div>
-        <div class="tick" style="left:22%"><i></i></div>
-        <div class="tick" style="left:48%"><i></i></div>
-        <div class="tick" style="left:74%"><i></i></div>
-      </div>
-      <div class="tlmin">31 min</div>
-    </div>
-    <div class="tlrow">
-      <div class="tlname">PhysGnosis<small>100% success</small></div>
-      <div class="track" style="width:100%">
-        <div class="seg auto" style="left:0;width:100%"></div>
-        <div class="tick" style="left:12%"><i></i></div>
-        <div class="tick" style="left:20%"><i></i></div>
-        <div class="tick" style="left:27%"><i></i></div>
-      </div>
-      <div class="tlmin">53 min</div>
-    </div>
-    <div class="tlkey">
-      <span><i class="dot" style="background:var(--alert);width:9px;height:9px;display:inline-block;border-radius:99px"></i>&nbsp;active teleoperation</span>
-      <span><i class="dot" style="background:var(--auto);width:9px;height:9px;display:inline-block;border-radius:99px"></i>&nbsp;autonomous operation</span>
-      <span>●&nbsp;typed language intervention (seconds each)</span>
-    </div>
+<section>
+  <h2>Autonomous Collection</h2>
+  <p class="muted center">50 / 50 episodes on the desktop-clearing testbed with 0 minutes of teleoperation — the operator types a few sentences, from anywhere.</p>
+  <div class="vidgrid" style="margin-top:22px">
+    <div class="vid"><span class="play">▶</span>basket_clearing.mp4<br>— drop asset —</div>
+    <div class="vid"><span class="play">▶</span>basket_reset.mp4<br>— drop asset —</div>
+    <div class="vid"><span class="play">▶</span>two_basket_sorting.mp4<br>— drop asset —</div>
+    <div class="vid"><span class="play">▶</span>blue_box_fruit.mp4<br>— drop asset —</div>
+    <div class="vid"><span class="play">▶</span>alert_and_correction.mp4<br>— drop asset —</div>
+    <div class="vid"><span class="play">▶</span>session_timelapse.mp4<br>— drop asset —</div>
   </div>
 
   <div class="tablewrap">
   <table>
-    <caption>Table 1 · Desktop Clearing collection efficiency</caption>
-    <thead><tr><th>Metric</th><th>Human teleop</th><th>Scripts</th><th>PhysGnosis</th></tr></thead>
+    <thead><tr><th>Collection efficiency (50 episodes)</th><th>Human Teleop</th><th>Scripts</th><th class="ours">PhysGnosis</th></tr></thead>
     <tbody>
       <tr><td>Successful episodes</td><td>50 / 50</td><td>35 / 50</td><td class="ours">50 / 50</td></tr>
       <tr><td>Human teleoperation time</td><td>30.0 min</td><td>1.0 min</td><td class="ours">0.0 min</td></tr>
-      <tr><td>Human interventions</td><td>—</td><td>3</td><td class="ours">3 (typed)</td></tr>
-      <tr><td>Trajectories per human-minute ↑</td><td>1.67</td><td>1.61</td><td class="ours">16.67</td></tr>
+      <tr><td>Human working time</td><td>30.0 min</td><td>31.0 min</td><td class="ours">4.8 min</td></tr>
+      <tr><td>Trajectories per human-minute ↑</td><td>1.67</td><td>1.13</td><td class="ours">10.42</td></tr>
     </tbody>
   </table>
   </div>
 </section>
 
-<section id="method">
-  <span class="eyebrow">Method</span>
-  <h2>Two timescales, a strict division of labor</h2>
-  <p><b>Within a session, the system changes its behavior through text alone.</b> A single instruction ("learn to tidy the tabletop") is expanded into a four-part plan: a collection routine, a collection success criterion, a reset routine, and a reset success criterion. Collection then runs as a closed loop — execute, let the scene settle, query a VLM verifier for a confidence score. A phase passes at threshold θ and retries up to N times; exhausting retries halts the arm into the <b style="color:#9a6b00">Alert</b> state. The pair (θ, N) makes the boundary between "keep going" and "ask a human" an explicit, tunable hyperparameter rather than an accident of implementation.</p>
-  <p><b>Between sessions, the model changes its weights through data alone.</b> Trajectories certified under the operator-corrected criteria fine-tune the underlying VLA policy. Human language reaches the weights only indirectly — through the data it certifies — and the improved policy returns to collection with fewer failures and fewer alerts.</p>
-  <div class="figph">figure: system overview (Fig. 1, right panel) — <span class="todo">drop static/images/method.png</span></div>
-  <h3 style="margin-top:26px">Corrective Memory</h3>
-  <p>Each operator sentence is parsed into a structured entry — <span style="font-family:var(--mono);font-size:14px">trigger · correction · scope · source utterance</span> — and stored as legible Markdown the operator can read, audit, and delete. Because corrections live as text at the orchestration layer, they modify neither VLA weights nor the perception stack, and remain valid when the underlying policy is swapped out. Round-scoped nudges ("nudge it slightly left this time") are applied once and discarded; conditioned rules ("for flat, low-profile objects, grasp 1 cm below the proposed height") persist and generalize to every matching object.</p>
-  <h3 style="margin-top:26px">Why the reset is verified separately</h3>
-  <p class="muted">A failed grasp is self-evident; a failed reset is silent. Unchecked, the scene drifts a little further from its intended state every round until no grasp can succeed. Verifying reset against its own criterion is what lets a multi-hour run pause before it degrades unnoticed.</p>
-</section>
-
-<section id="correction">
-  <span class="eyebrow">Language-guided correction · §4.2</span>
-  <h2>Sentences that repair both perception and action</h2>
-  <p>The channel presupposes nothing about what feedback contains. The same parser handles a success criterion that is too strict, an object that should be skipped, and a grasp that needs a condition.</p>
+<section>
+  <h2>Language-Guided Correction</h2>
+  <p class="muted center">One channel repairs both perception and action — a success criterion that is too strict, an object to skip, a grasp that needs a condition.</p>
 
   <div class="tablewrap">
   <table>
-    <caption>Table 2 · VLM verifier accuracy before / after one correction</caption>
-    <thead><tr><th>Task setting</th><th>Correction</th><th>Before</th><th>After</th></tr></thead>
+    <thead><tr><th>VLM verifier accuracy</th><th>Correction</th><th>Before</th><th class="ours">After</th></tr></thead>
     <tbody>
       <tr><td>Basket desktop clearing</td><td>partial containment</td><td>40.0%</td><td class="ours">100.0%</td></tr>
       <tr><td>Basket desktop reset</td><td>relaxed reset criterion</td><td>0.0%</td><td class="ours">100.0%</td></tr>
-      <tr><td>Box fruit clearing (harder)</td><td>ambiguous case</td><td>—</td><td>40.0%</td></tr>
-      <tr><td>Two-basket object sorting</td><td>category-wise rule</td><td>—</td><td class="ours">100.0%</td></tr>
+      <tr><td>Box fruit clearing (harder)</td><td>ambiguous case</td><td>0.0%</td><td>40.0%</td></tr>
+      <tr><td>Two-basket object sorting</td><td>category-wise rule</td><td>20.0%</td><td class="ours">100.0%</td></tr>
     </tbody>
   </table>
   </div>
 
-  <p style="margin-top:18px">Corrections also redirect the action side. Across eight object categories, average clearing success rises from <b>12.5%</b> (original) to <b>20.0%</b> with a SAM-based perception fix, <b>47.5%</b> with a depth correction, and <b>50.0%</b> after a language-directed arm-selection switch — the best strategy varies by object, and the operator can say so.</p>
+  <div class="bars" style="margin-top:30px">
+    <div class="bar"><span class="bl">Original agent plan</span><span class="btrack"><span class="bfill" style="width:12.5%"></span></span><span class="bv">12.5%</span></div>
+    <div class="bar"><span class="bl">+ SAM3 prompt fix</span><span class="btrack"><span class="bfill" style="width:20%"></span></span><span class="bv">20.0%</span></div>
+    <div class="bar"><span class="bl">+ Depth offset</span><span class="btrack"><span class="bfill" style="width:47.5%"></span></span><span class="bv">47.5%</span></div>
+    <div class="bar hl"><span class="bl">+ Arm choice</span><span class="btrack"><span class="bfill" style="width:50%"></span></span><span class="bv">50.0%</span></div>
+  </div>
+  <p class="caption">Single-attempt collection success across eight object categories under cumulative language corrections.</p>
 
-  <div class="vidgrid two">
+  <div class="vidgrid two" style="margin-top:22px">
     <div class="vid"><span class="play">▶</span>before_correction.mp4<br>— alert loop, verifier rejects valid clears —</div>
     <div class="vid"><span class="play">▶</span>after_correction.mp4<br>— same scene, uninterrupted collection —</div>
   </div>
 </section>
 
-<section id="flywheel">
-  <span class="eyebrow">Closing the loop · §4.3</span>
-  <h2>The data is good enough to beat teleoperation</h2>
-  <p class="muted">Policies fine-tuned from the same VLA checkpoint, evaluated over 20 blind physical trials per task — no agent, no verifier, no memory lookup, no human. Zero-shot average:</p>
+<section>
+  <h2>Data Quality via Downstream Policy</h2>
+  <p class="muted center">Policies fine-tuned from π<sub>0.5</sub> on 50 demonstrations each, evaluated over 20 blind physical trials — no agent, no verifier, no memory, no human.</p>
 
   <div class="bars">
-    <div class="bar"><span class="bl">Pre-trained base</span><span class="btrack"><span class="bfill" style="width:17.5%"></span></span><span class="bv">17.5%</span></div>
-    <div class="bar"><span class="bl">Budget-matched teleop (4.8 human-min)</span><span class="btrack"><span class="bfill" style="width:32.5%"></span></span><span class="bv">32.5%</span></div>
-    <div class="bar"><span class="bl">Scripted collector data</span><span class="btrack"><span class="bfill" style="width:42.5%"></span></span><span class="bv">42.5%</span></div>
-    <div class="bar tel"><span class="bl">Full human teleop (46 human-min)</span><span class="btrack"><span class="bfill" style="width:82.5%"></span></span><span class="bv">82.5%</span></div>
-    <div class="bar hl"><span class="bl">PhysGnosis data (4.8 human-min)</span><span class="btrack"><span class="bfill" style="width:87.5%"></span></span><span class="bv">87.5%</span></div>
+    <div class="bar"><span class="bl">Scripted data</span><span class="btrack"><span class="bfill" style="width:55%"></span></span><span class="bv">55.0%</span></div>
+    <div class="bar"><span class="bl">Full human teleop (30 human-min)</span><span class="btrack"><span class="bfill" style="width:80%"></span></span><span class="bv">80.0%</span></div>
+    <div class="bar hl"><span class="bl">PhysGnosis data (4.8 human-min)</span><span class="btrack"><span class="bfill" style="width:80%"></span></span><span class="bv">80.0%</span></div>
   </div>
-
-  <p style="margin-top:18px">Equal human time alone is not enough — the budget-matched teleop set is simply too small. PhysGnosis occupies the useful operating point: <b>50 valid demos with action coverage close to full teleoperation (action std. 0.20 vs 0.22, diversity 0.35 vs 0.38), at roughly a tenth of the runtime human minutes</b>. A policy trained on one run becomes the collector for the next; the corrections that made early interventions persistent keep applying; human involvement diminishes as the flywheel turns.</p>
-</section>
-
-<section>
-  <span class="eyebrow">Abstract</span>
-  <h2>Abstract</h2>
-  <p class="muted" style="font-size:16.5px">Autonomous data collection governs both the volume and quality of real-world trajectories available for manipulation policy learning. Existing pipelines reduce human effort through self-resetting mechanisms, VLM-based verification, or language-guided correction — but the knowledge produced by each intervention is discarded after the current episode, so recurrent failure modes demand repeated attention and the cost of oversight grows with session duration. We present <b>PhysGnosis</b>, a human-robot symbiotic agentic system in which the robot improves under natural-language guidance. The operator supplies corrective knowledge in natural language, and every correction is retained for reuse in all subsequent rounds. As this knowledge accumulates, the system resolves recurring failures on its own and demands progressively less human attention. On a real-robot pick-and-place testbed, PhysGnosis matches the collection success rate of full human teleoperation while reducing the human-time ratio below <span class="todo">X% — final number</span>. Language corrections repair both verifier criteria and execution strategies, raising verifier accuracy from 40.0% to 100.0% and collection success from 25.0% to 65.0% across object categories. Closing the loop to deployment, policies fine-tuned on PhysGnosis-collected data outperform the base policy by <span class="todo">70.0 pts (derived from Table 5)</span> in zero-shot success rate, comparable to policies trained on full teleoperation data at a fraction of the runtime and human cost.</p>
+  <p class="caption">PhysGnosis data is good enough, not merely cheap — the same policy success as full teleoperation at a fraction of the human cost.</p>
 </section>
 
 <section id="bibtex">
-  <span class="eyebrow">Citation</span>
   <h2>BibTeX</h2>
 <pre>@article{wang2026physgnosis,
   title   = {PhysGnosis: A Human-Robot Symbiotic System
              for Physical-World Interaction},
-  author  = {Wang, Boyuan and Zhang, Zhenyuan and
-             Yang, Zhiqin and Huang, Guan},
+  author  = {Wang, Boyuan and Zhang, Zhenyuan and Yang, Zhiqin and
+             Gu, Peijun and Wang, Shuya and Wang, Xiaofeng and
+             Zhu, Zheng and Chang, Yifan and Zhao, Guosheng and
+             Shao, Jiangnan and Huang, Guan and Liu, Hengyu and
+             Ze, Xianghui and Zhang, Yonggang and Xue, Wei and
+             Guo, Yike and Wang, Xingang},
   journal = {arXiv preprint},
   year    = {2026}
 }</pre>
@@ -425,7 +305,7 @@
 </main>
 
 <footer>
-  <div class="wrap">© 2026 GigaAI. Page design informed by the Nerfies template lineage. Color encodes system state: <span style="color:var(--auto)">autonomous</span> · <span style="color:#b07a00">human intervention</span> · <span style="color:var(--verified)">verified</span>.</div>
+  <div class="wrap">© 2026 GigaAI. Website template inspired by the <a href="https://nerfies.github.io/">Nerfies</a> lineage.</div>
 </footer>
 
 <script>
@@ -444,7 +324,7 @@
   const memory = new Set();
   let ep = 0, running = false;
 
-  // Failure modes drawn from §4.2 of the paper
+  // Failure modes drawn from Sec. 4.3 of the paper
   const failures = [
     { key:'containment', atEp:2,
       alert:'VLM verifier rejected the episode: banana is partially over the basket rim.',
@@ -459,7 +339,6 @@
         {label:'"Nudge it slightly to the left this time."', once:true}
       ]}
   ];
-  let pendingFailure = null, onceUsed = false;
 
   function line(cls, html, delay){
     return new Promise(res=>{
@@ -486,24 +365,23 @@
 
     const f = failures.find(f=>f.atEp===ep && !memory.has(f.key));
     if(f){
-      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence 0.31 &lt; θ — retry 1/3`, 700);
-      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence 0.28 &lt; θ — retry 2/3`, 700);
-      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence 0.30 &lt; θ — retries exhausted`, 700);
+      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence 31 &lt; θ=80 — retry 1/3`, 700);
+      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence 28 &lt; θ=80 — retry 2/3`, 700);
+      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence 30 &lt; θ=80 — retries exhausted`, 700);
       await line('warn', `<span class="t">${ts()}</span> <b>ALERT</b> arm halted · notifying remote operator…`, 600);
       enterAlert(f);
       return;
     }
-    const conf=(0.86+Math.random()*0.12).toFixed(2);
+    const conf=Math.round(86+Math.random()*12);
     if(failures.some(o=>o.atEp===ep && memory.has(o.key))){
       await line('ok', `<span class="t">${ts()}</span> <b>MEMORY</b> matched rule applied automatically — no alert`, 600);
     }
-    await line('ok', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence ${conf} ≥ θ — trajectory saved`, 700);
+    await line('ok', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence ${conf} ≥ θ=80 — trajectory saved`, 700);
     await line('auto', `<span class="t">${ts()}</span> <b>RESET</b> scene restored · verified`, 600);
     next();
   }
 
   function enterAlert(f){
-    pendingFailure=f;
     setState('ALERT — waiting for operator (you)','alert');
     footIdle.style.display='none';
     footAlert.style.display='block';
@@ -515,7 +393,7 @@
       b.onclick=()=>resolveAlert(f,c);
       choicesEl.appendChild(b);
     });
-    line('warn', `<span class="t">${ts()}</span> <b>OPERATOR?</b> ${pendingFailure.alert}`, 200);
+    line('warn', `<span class="t">${ts()}</span> <b>OPERATOR?</b> ${f.alert}`, 200);
   }
 
   async function resolveAlert(f,c){
@@ -530,9 +408,7 @@
       e.innerHTML=`<span class="k">trigger:</span> ${c.entry.trigger}<br><span class="k">correction:</span> ${c.entry.correction}<br><span class="k">scope:</span> ${c.entry.scope}`;
       mem.appendChild(e);
     } else {
-      onceUsed=true;
       await line('auto', `<span class="t">${ts()}</span> <b>PARSER</b> round-scoped → applied once, nothing stored`, 700);
-      // one-off fix: this failure mode will recur next episode; shift any colliding failure later
       f.atEp = ep+1;
       failures.forEach(o=>{ if(o!==f && o.atEp===f.atEp && !memory.has(o.key)) o.atEp = Math.min(6, f.atEp+2); });
     }
