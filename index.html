@@ -85,8 +85,8 @@
   .bar{display:grid;grid-template-columns:210px 1fr 52px;align-items:center;gap:12px}
   @media(max-width:640px){.bar{grid-template-columns:120px 1fr 46px}}
   .bar .bl{font-size:14px;line-height:1.3}
-  .bar .btrack{height:18px;background:#f3f4f7;border-radius:4px;overflow:hidden}
-  .bar .bfill{height:100%;background:#b9c2d6}
+  .bar .btrack{display:block;height:18px;background:#f3f4f7;border-radius:4px;overflow:hidden}
+  .bar .bfill{display:block;height:100%;background:#b9c2d6}
   .bar.hl .bfill{background:var(--accent)}
   .bar .bv{font-family:var(--mono);font-size:13px;text-align:right}
   .bar.hl .bl,.bar.hl .bv{font-weight:700;color:var(--accent)}
