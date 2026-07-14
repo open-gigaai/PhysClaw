@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PhysGnosis: A Human-Robot Symbiotic System for Physical-World Interaction</title>
-<meta name="description" content="PhysGnosis — a human-robot symbiotic agentic system. The robot collects data autonomously and asks for help in natural language. Correct it once; it never asks again.">
-<meta property="og:title" content="PhysGnosis: A Human-Robot Symbiotic System for Physical-World Interaction">
+<title>PhysClaw: A Human-Robot Symbiotic System for Physical-World Interaction</title>
+<meta name="description" content="PhysClaw — a human-robot symbiotic agentic system. The robot collects data autonomously and asks for help in natural language. Correct it once; the correction is reused in every subsequent round.">
+<meta property="og:title" content="PhysClaw: A Human-Robot Symbiotic System for Physical-World Interaction">
 <meta property="og:description" content="Matches full-teleoperation collection success with 16% of the human working time. Policies trained on its data match teleoperation data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,15 +54,14 @@
   .tagline b{color:var(--ink)}
 
   /* ============ Video / figure placeholders ============ */
-  .vid{aspect-ratio:16/9;border-radius:10px;background:repeating-linear-gradient(45deg,#f4f4f6 0 12px,#eeeef2 12px 24px);border:1px dashed #c9cdd8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--soft);font-family:var(--mono);font-size:12px;text-align:center;padding:10px}
-  .vid .play{width:40px;height:40px;border-radius:99px;background:#fff;border:1px solid var(--line);display:grid;place-items:center}
   .teaser{margin-top:34px}
-  .teaser .vid{aspect-ratio:16/8}
   .vidgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
   .vidgrid.two{grid-template-columns:repeat(2,1fr)}
-  .vidgrid .vid{aspect-ratio:16/10}
   @media(max-width:680px){.vidgrid,.vidgrid.two{grid-template-columns:1fr}}
-  .figph{border:1px dashed #c9cdd8;border-radius:10px;padding:44px 20px;text-align:center;font-family:var(--mono);font-size:12.5px;color:var(--soft)}
+  video{width:100%;display:block;border-radius:10px;background:#000}
+  .teaser video{border-radius:12px}
+  .vlabel{font-family:var(--mono);font-size:12px;color:var(--soft);text-align:center;margin-top:6px}
+  .vcell{display:flex;flex-direction:column}
 
   /* ============ Stat band ============ */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:30px}
@@ -129,7 +128,7 @@
 
 <header class="wrap">
   <div class="venue">GigaAI · 2026</div>
-  <h1>PhysGnosis: A Human-Robot Symbiotic System for Physical-World Interaction</h1>
+  <h1>PhysClaw: A Human-Robot Symbiotic System for Physical-World Interaction</h1>
 
   <div class="authors">
     <a href="#">Boyuan Wang</a><sup>1,2,*</sup>,
@@ -138,23 +137,23 @@
     <a href="#">Peijun Gu</a><sup>1,4</sup>,
     <a href="#">Shuya Wang</a><sup>1,5</sup>,
     <a href="#">Xiaofeng Wang</a><sup>1,6</sup>,
-    <a href="#">Zheng Zhu</a><sup>1</sup>,
+    <a href="#">Xianghui Ze</a><sup>7</sup>,
     <a href="#">Yifan Chang</a><sup>2</sup>,
     <a href="#">Guosheng Zhao</a><sup>1</sup>,
     <a href="#">Jiangnan Shao</a><sup>1</sup>,
     <a href="#">Guan Huang</a><sup>1</sup>,
-    <a href="#">Hengyu Liu</a><sup>7</sup>,
-    <a href="#">Xianghui Ze</a><sup>8</sup>,
+    <a href="#">Hengyu Liu</a><sup>8</sup>,
     <a href="#">Yonggang Zhang</a><sup>3</sup>,
     <a href="#">Wei Xue</a><sup>3</sup>,
     <a href="#">Yike Guo</a><sup>3</sup>,
-    <a href="#">Xingang Wang</a><sup>2</sup>
+    <a href="#">Xingang Wang</a><sup>2</sup>,
+    <a href="#">Zheng Zhu</a><sup>1,&#9993;</sup>
   </div>
   <div class="affils">
     <sup>1</sup>GigaAI &nbsp; <sup>2</sup>University of Chinese Academy of Sciences &nbsp; <sup>3</sup>HKUST &nbsp; <sup>4</sup>University of Leeds<br>
-    <sup>5</sup>Cornell University &nbsp; <sup>6</sup>Tsinghua University &nbsp; <sup>7</sup>CUHK &nbsp; <sup>8</sup>Nanjing University of Science and Technology
+    <sup>5</sup>Cornell University &nbsp; <sup>6</sup>Tsinghua University &nbsp; <sup>7</sup>Nanjing University of Science and Technology &nbsp; <sup>8</sup>CUHK
   </div>
-  <div class="eqnote"><sup>*</sup>Equal contribution</div>
+  <div class="eqnote"><sup>*</sup>Equal contribution &nbsp;·&nbsp; <sup>&#9993;</sup>Corresponding author</div>
 
   <div class="btns">
     <a class="btn" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm8 1v5h5"/></svg>arXiv</a>
@@ -163,10 +162,11 @@
     <a class="btn" href="#bibtex">BibTeX</a>
   </div>
 
-  <p class="tagline">The robot collects data on its own and asks for help in plain language.<br><b>Correct it once — it never asks about that failure again.</b></p>
+  <p class="tagline">The robot collects data on its own and asks for help in plain language.<br><b>Correct it once — the correction is reused in every round after.</b></p>
 
   <div class="teaser">
-    <div class="vid"><span class="play">▶</span>teaser.mp4 — uncut collect–verify–reset session<br>— drop static/videos/teaser.mp4 —</div>
+    <video src="static/videos/speedrun1hr.mp4" autoplay muted loop playsinline preload="auto" aria-label="One-hour autonomous collection session, time-lapse"></video>
+    <div class="vlabel">1-hour autonomous collection session — time-lapse, loops continuously</div>
   </div>
 
   <div class="stats">
@@ -181,14 +181,14 @@
 
 <section>
   <h2>Abstract</h2>
-  <p class="muted">In existing collection pipelines, the knowledge produced by each human intervention is discarded after the current episode, so recurrent failure modes demand repeated attention. <b style="color:var(--ink)">PhysGnosis</b> is a human-robot symbiotic agentic system: the robot collects, verifies, and resets autonomously, gated by self-assessed confidence, and pauses to ask a remote operator only when reliability drops. The operator answers in natural language; an LLM parser turns each utterance into a structured rule stored in a persistent <b style="color:var(--ink)">Corrective Memory</b>, so an addressed failure mode rarely needs a second correction. On a real-robot desktop-clearing testbed, PhysGnosis matches the collection success of full teleoperation with 16% of the human working time, and policies fine-tuned on its data match those trained on teleoperation data.</p>
+  <p class="muted">In long-horizon collection, the same failure modes recur across episodes — and a correction scoped to the episode at hand must be re-issued at every recurrence, so the cost of oversight grows with session duration rather than with the number of distinct problems. <b style="color:var(--ink)">PhysClaw</b> is a human-robot symbiotic agentic system that formulates the collection loop as a verification-gated decision process: the robot collects, verifies, and resets autonomously and pauses to notify a remote operator only when a phase fails verification repeatedly, a boundary set by an explicit retry budget. The operator describes the problem in natural language; an LLM parser translates each utterance into a structured adjustment stored in a persistent <b style="color:var(--ink)">Corrective Memory</b> consulted on all subsequent rounds, so an addressed failure mode rarely needs a second correction. On a real-robot desktop-clearing testbed, PhysClaw matches the episode collection success rate of full teleoperation with 16% of the human working time; language corrections repair both verifier criteria and execution strategies — improving verifier agreement with human labels in all four evaluated settings and raising single-attempt collection success from 12.5% to 47.5% (20.0% to 50.0% in a separate arm-selection comparison) — and policies fine-tuned on its data match those trained on teleoperation data.</p>
 </section>
 
 <section>
   <h2>Method</h2>
-  <p class="muted center">One instruction becomes a plan; collection runs as a confidence-gated collect–verify–reset loop. When retries are exhausted, the system halts, asks the operator in language, and persists the answer to Corrective Memory.</p>
-  <img src="static/images/method.png" alt="Overview of the agent-guided robotic data collection pipeline in PhysGnosis" style="width:100%;border-radius:10px;margin-top:22px">
-  <p class="caption">Within a session the system changes its behavior through text alone; between sessions the policy changes its weights through data alone.</p>
+  <p class="muted center">One instruction becomes a plan — collection and reset routines plus their verification prompts. Collection then runs as a verification-gated collect–verify–reset loop: each phase must earn an explicit <b style="color:var(--ink)">yes</b> verdict from a VLM verifier, up to a retry budget of 3. When a phase exhausts its retries, the system halts in the Alert state, asks the operator in language, and persists the answer to Corrective Memory.</p>
+  <img src="static/images/method.png" alt="Overview of the agent-guided robotic data collection pipeline in PhysClaw" style="width:100%;border-radius:10px;margin-top:22px">
+  <p class="caption">Within a session the system changes its behavior through text alone; between sessions the policy changes its weights through data alone. Built on OpenClaw — VLM verifier: Seed1.8; LLM parser: DeepSeek-V3.2.</p>
 </section>
 
 <section>
@@ -223,17 +223,33 @@
   <h2>Autonomous Collection</h2>
   <p class="muted center">50 / 50 episodes on the desktop-clearing testbed with 0 minutes of teleoperation — the operator types a few sentences, from anywhere.</p>
   <div class="vidgrid" style="margin-top:22px">
-    <div class="vid"><span class="play">▶</span>basket_clearing.mp4<br>— drop asset —</div>
-    <div class="vid"><span class="play">▶</span>basket_reset.mp4<br>— drop asset —</div>
-    <div class="vid"><span class="play">▶</span>two_basket_sorting.mp4<br>— drop asset —</div>
-    <div class="vid"><span class="play">▶</span>blue_box_fruit.mp4<br>— drop asset —</div>
-    <div class="vid"><span class="play">▶</span>alert_and_correction.mp4<br>— drop asset —</div>
-    <div class="vid"><span class="play">▶</span>session_timelapse.mp4<br>— drop asset —</div>
+    <div class="vcell">
+      <video src="static/videos/4objects.mp4" controls muted loop playsinline preload="metadata" aria-label="Desktop clearing with four objects"></video>
+      <div class="vlabel">Desktop clearing — 4 objects</div>
+    </div>
+    <div class="vcell">
+      <video src="static/videos/5objects.mp4" controls muted loop playsinline preload="metadata" aria-label="Desktop clearing with five objects"></video>
+      <div class="vlabel">Desktop clearing — 5 objects</div>
+    </div>
+    <div class="vcell">
+      <video src="static/videos/fulldemo2banana.mp4" controls muted loop playsinline preload="metadata" aria-label="Full collect–verify–reset demo, banana scene"></video>
+      <div class="vlabel">Full collect–verify–reset demo — banana scene</div>
+    </div>
+  </div>
+  <div class="vidgrid two" style="margin-top:14px">
+    <div class="vcell">
+      <video src="static/videos/fulldemo1.mp4" controls muted loop playsinline preload="metadata" aria-label="Full collect–verify–reset demo"></video>
+      <div class="vlabel">Full collect–verify–reset demo</div>
+    </div>
+    <div class="vcell">
+      <video src="static/videos/1hrdemo2.mp4" controls muted loop playsinline preload="metadata" aria-label="Uncut one-hour autonomous collection session"></video>
+      <div class="vlabel">Uncut 1-hour autonomous collection session</div>
+    </div>
   </div>
 
   <div class="tablewrap">
   <table>
-    <thead><tr><th>Collection efficiency (50 episodes)</th><th>Human Teleop</th><th>Scripts</th><th class="ours">PhysGnosis</th></tr></thead>
+    <thead><tr><th>Collection efficiency (50 episodes)</th><th>Human Teleop</th><th>Scripts</th><th class="ours">PhysClaw</th></tr></thead>
     <tbody>
       <tr><td>Successful episodes</td><td>50 / 50</td><td>35 / 50</td><td class="ours">50 / 50</td></tr>
       <tr><td>Human teleoperation time</td><td>30.0 min</td><td>1.0 min</td><td class="ours">0.0 min</td></tr>
@@ -262,16 +278,30 @@
 
   <div class="bars" style="margin-top:30px">
     <div class="bar"><span class="bl">Original agent plan</span><span class="btrack"><span class="bfill" style="width:12.5%"></span></span><span class="bv">12.5%</span></div>
-    <div class="bar"><span class="bl">+ SAM3 prompt fix</span><span class="btrack"><span class="bfill" style="width:20%"></span></span><span class="bv">20.0%</span></div>
-    <div class="bar"><span class="bl">+ Depth offset</span><span class="btrack"><span class="bfill" style="width:47.5%"></span></span><span class="bv">47.5%</span></div>
-    <div class="bar hl"><span class="bl">+ Arm choice</span><span class="btrack"><span class="bfill" style="width:50%"></span></span><span class="bv">50.0%</span></div>
+    <div class="bar"><span class="bl">+ SAM3 prompt fix</span><span class="btrack"><span class="bfill" style="width:25%"></span></span><span class="bv">25.0%</span></div>
+    <div class="bar hl"><span class="bl">+ Depth offset</span><span class="btrack"><span class="bfill" style="width:47.5%"></span></span><span class="bv">47.5%</span></div>
   </div>
-  <p class="caption">Single-attempt collection success across eight object categories under cumulative language corrections.</p>
+  <p class="caption">Single-attempt collection success across eight object categories under cumulative language corrections (five attempts per object per setting). The depth offset improves every category (+22.5 pts); the SAM3 re-prompt (+12.5 pts) concentrates on the four categories with segmentation errors.</p>
 
-  <div class="vidgrid two" style="margin-top:22px">
-    <div class="vid"><span class="play">▶</span>before_correction.mp4<br>— alert loop, verifier rejects valid clears —</div>
-    <div class="vid"><span class="play">▶</span>after_correction.mp4<br>— same scene, uninterrupted collection —</div>
+  <div class="bars" style="margin-top:30px">
+    <div class="bar"><span class="bl">Proximity-based arm choice (default)</span><span class="btrack"><span class="bfill" style="width:20%"></span></span><span class="bv">20.0%</span></div>
+    <div class="bar hl"><span class="bl">+ Language-guided arm selection</span><span class="btrack"><span class="bfill" style="width:50%"></span></span><span class="bv">50.0%</span></div>
   </div>
+  <p class="caption">A separate controlled comparison isolating the arm-selection rule (+30.0 pts, improving seven of eight categories): the default assigns the closest arm, but the camera views often reveal that the farther arm has the clearer grasping approach.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Live collection (cumulative success, %)</th><th>0 interventions</th><th>1</th><th>2</th><th>3</th></tr></thead>
+    <tbody>
+      <tr><td>Banana</td><td>57.1</td><td class="ours">61.1</td><td>–</td><td>–</td></tr>
+      <tr><td>Banana &amp; Pepper</td><td>42.9</td><td>47.5</td><td class="ours">46.0</td><td>–</td></tr>
+      <tr><td>Banana &amp; Grape</td><td>60.9</td><td class="ours">66.7</td><td>–</td><td>–</td></tr>
+      <tr><td>Banana &amp; Chili</td><td>80.0</td><td>70.6</td><td>75.9</td><td>76.5</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="caption">Corrections accumulating during live collection. A stored correction is guaranteed to be reused, not guaranteed to help — three of four groups end above the pre-intervention level; the hardest scene recovers only partially.</p>
+
 </section>
 
 <section>
@@ -281,22 +311,33 @@
   <div class="bars">
     <div class="bar"><span class="bl">Scripted data</span><span class="btrack"><span class="bfill" style="width:55%"></span></span><span class="bv">55.0%</span></div>
     <div class="bar"><span class="bl">Full human teleop (30 human-min)</span><span class="btrack"><span class="bfill" style="width:80%"></span></span><span class="bv">80.0%</span></div>
-    <div class="bar hl"><span class="bl">PhysGnosis data (4.8 human-min)</span><span class="btrack"><span class="bfill" style="width:80%"></span></span><span class="bv">80.0%</span></div>
+    <div class="bar hl"><span class="bl">PhysClaw data (4.8 human-min)</span><span class="btrack"><span class="bfill" style="width:80%"></span></span><span class="bv">80.0%</span></div>
   </div>
-  <p class="caption">PhysGnosis data is good enough, not merely cheap — the same policy success as full teleoperation at a fraction of the human cost.</p>
+  <p class="caption">PhysClaw data is good enough, not merely cheap — the same policy success as full teleoperation at a fraction of the human cost.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Data-quality diagnostics (50 episodes each)</th><th>Smoothness ↑</th><th>Aesthetics ↑</th><th>Brightness</th><th>RMS jerk ↓</th></tr></thead>
+    <tbody>
+      <tr><td>Full human teleop</td><td>78.1 ± 7.7</td><td>55.2 ± 1.6</td><td>133 ± 2</td><td>267 ± 66</td></tr>
+      <tr><td class="ours">PhysClaw collector</td><td>64.2 ± 22.7</td><td class="ours">61.2 ± 1.1</td><td>130 ± 2</td><td class="ours">191 ± 97</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="caption">Comparable illumination and higher image quality, lower RMS jerk, but a remaining smoothness (continuity) gap — the diagnostics indicate comparably usable data, not overall superiority.</p>
 </section>
 
 <section id="bibtex">
   <h2>BibTeX</h2>
-<pre>@article{wang2026physgnosis,
-  title   = {PhysGnosis: A Human-Robot Symbiotic System
+<pre>@article{wang2026physclaw,
+  title   = {PhysClaw: A Human-Robot Symbiotic System
              for Physical-World Interaction},
   author  = {Wang, Boyuan and Zhang, Zhenyuan and Yang, Zhiqin and
              Gu, Peijun and Wang, Shuya and Wang, Xiaofeng and
-             Zhu, Zheng and Chang, Yifan and Zhao, Guosheng and
+             Ze, Xianghui and Chang, Yifan and Zhao, Guosheng and
              Shao, Jiangnan and Huang, Guan and Liu, Hengyu and
-             Ze, Xianghui and Zhang, Yonggang and Xue, Wei and
-             Guo, Yike and Wang, Xingang},
+             Zhang, Yonggang and Xue, Wei and Guo, Yike and
+             Wang, Xingang and Zhu, Zheng},
   journal = {arXiv preprint},
   year    = {2026}
 }</pre>
@@ -365,18 +406,17 @@
 
     const f = failures.find(f=>f.atEp===ep && !memory.has(f.key));
     if(f){
-      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence 31 &lt; θ=80 — retry 1/3`, 700);
-      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence 28 &lt; θ=80 — retry 2/3`, 700);
-      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence 30 &lt; θ=80 — retries exhausted`, 700);
+      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> verdict: no — retry 1/3`, 700);
+      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> verdict: no — retry 2/3`, 700);
+      await line('warn', `<span class="t">${ts()}</span> <b>VERIFY</b> verdict: no — retry budget exhausted`, 700);
       await line('warn', `<span class="t">${ts()}</span> <b>ALERT</b> arm halted · notifying remote operator…`, 600);
       enterAlert(f);
       return;
     }
-    const conf=Math.round(86+Math.random()*12);
     if(failures.some(o=>o.atEp===ep && memory.has(o.key))){
       await line('ok', `<span class="t">${ts()}</span> <b>MEMORY</b> matched rule applied automatically — no alert`, 600);
     }
-    await line('ok', `<span class="t">${ts()}</span> <b>VERIFY</b> confidence ${conf} ≥ θ=80 — trajectory saved`, 700);
+    await line('ok', `<span class="t">${ts()}</span> <b>VERIFY</b> verdict: yes — trajectory saved`, 700);
     await line('auto', `<span class="t">${ts()}</span> <b>RESET</b> scene restored · verified`, 600);
     next();
   }
