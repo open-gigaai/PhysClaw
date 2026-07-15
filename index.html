@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PhysClaw: A Human-Robot Symbiotic System for Physical-World Interaction</title>
+<title>PhysClaw-0: A Symbiotic Agentic System for Robot Autonomy via Language Corrections</title>
 <meta name="description" content="PhysClaw — a human-robot symbiotic agentic system. The robot collects data autonomously and asks for help in natural language. Correct it once; the correction is reused in every subsequent round.">
-<meta property="og:title" content="PhysClaw: A Human-Robot Symbiotic System for Physical-World Interaction">
+<meta property="og:title" content="PhysClaw-0: A Symbiotic Agentic System for Robot Autonomy via Language Corrections">
 <meta property="og:description" content="Matches full-teleoperation collection success with 16% of the human working time. Policies trained on its data match teleoperation data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,7 +42,8 @@
   /* ============ Hero ============ */
   header{padding:56px 0 8px;text-align:center}
   .venue{font-family:var(--mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);margin-bottom:18px}
-  .authors{font-size:16.5px;line-height:1.9;max-width:760px;margin:22px auto 0}
+  .authors{font-size:16.5px;line-height:1.9;max-width:880px;margin:22px auto 0}
+  .authors .author{white-space:nowrap}
   .authors sup{font-size:11px;color:var(--soft)}
   .affils{font-size:14.5px;color:var(--soft);margin-top:8px;line-height:1.7}
   .eqnote{font-size:13px;color:var(--soft);margin-top:6px}
@@ -128,37 +129,38 @@
 
 <header class="wrap">
   <div class="venue">GigaAI · 2026</div>
-  <h1>PhysClaw: A Human-Robot Symbiotic System for Physical-World Interaction</h1>
+  <h1>PhysClaw-0: A Symbiotic Agentic System for Robot Autonomy via Language Corrections</h1>
 
   <div class="authors">
-    <a href="#">Boyuan Wang</a><sup>1,2,*</sup>,
-    <a href="#">Zhenyuan Zhang</a><sup>1,3,*</sup>,
-    <a href="#">Zhiqin Yang</a><sup>3,*</sup>,
-    <a href="#">Peijun Gu</a><sup>1,4</sup>,
-    <a href="#">Shuya Wang</a><sup>1,5</sup>,
-    <a href="#">Xiaofeng Wang</a><sup>1,6</sup>,
-    <a href="#">Xianghui Ze</a><sup>7</sup>,
-    <a href="#">Yifan Chang</a><sup>2</sup>,
-    <a href="#">Guosheng Zhao</a><sup>1</sup>,
-    <a href="#">Jiangnan Shao</a><sup>1</sup>,
-    <a href="#">Guan Huang</a><sup>1</sup>,
-    <a href="#">Hengyu Liu</a><sup>8</sup>,
-    <a href="#">Yonggang Zhang</a><sup>3</sup>,
-    <a href="#">Wei Xue</a><sup>3</sup>,
-    <a href="#">Yike Guo</a><sup>3</sup>,
-    <a href="#">Xingang Wang</a><sup>2</sup>,
-    <a href="#">Zheng Zhu</a><sup>1,&#9993;</sup>
+    <span class="author"><a href="#">Boyuan Wang</a><sup>1,2,*</sup></span>,
+    <span class="author"><a href="#">Zhenyuan Zhang</a><sup>1,3,*</sup></span>,
+    <span class="author"><a href="#">Zhiqin Yang</a><sup>3,*</sup></span>,
+    <span class="author"><a href="#">Peijun Gu</a><sup>1,4</sup></span>,
+    <span class="author"><a href="#">Shuya Wang</a><sup>1,5</sup></span>,
+    <span class="author"><a href="#">Xiaofeng Wang</a><sup>1,6</sup></span>,<br>
+    <span class="author"><a href="#">Xianghui Ze</a><sup>7</sup></span>,
+    <span class="author"><a href="#">Yifan Chang</a><sup>2</sup></span>,
+    <span class="author"><a href="#">Guosheng Zhao</a><sup>1</sup></span>,
+    <span class="author"><a href="#">Jiangnan Shao</a><sup>1</sup></span>,
+    <span class="author"><a href="#">Guan Huang</a><sup>1</sup></span>,
+    <span class="author"><a href="#">Hengyu Liu</a><sup>8</sup></span>,
+    <span class="author"><a href="#">Yonggang Zhang</a><sup>3</sup></span>,<br>
+    <span class="author"><a href="#">Wei Xue</a><sup>3</sup></span>,
+    <span class="author"><a href="#">Chunyuan Guan</a><sup>9</sup></span>,
+    <span class="author"><a href="#">Chenglin Pu</a><sup>9</sup></span>,
+    <span class="author"><a href="#">Yike Guo</a><sup>3</sup></span>,
+    <span class="author"><a href="#">Xingang Wang</a><sup>2</sup></span>,
+    <span class="author"><a href="#">Zheng Zhu</a><sup>1,&#9993;</sup></span>
   </div>
   <div class="affils">
     <sup>1</sup>GigaAI &nbsp; <sup>2</sup>University of Chinese Academy of Sciences &nbsp; <sup>3</sup>HKUST &nbsp; <sup>4</sup>University of Leeds<br>
-    <sup>5</sup>Cornell University &nbsp; <sup>6</sup>Tsinghua University &nbsp; <sup>7</sup>Nanjing University of Science and Technology &nbsp; <sup>8</sup>CUHK
+    <sup>5</sup>Cornell University &nbsp; <sup>6</sup>Tsinghua University &nbsp; <sup>7</sup>Nanjing University of Science and Technology &nbsp; <sup>8</sup>CUHK &nbsp; <sup>9</sup>FAWTD
   </div>
   <div class="eqnote"><sup>*</sup>Equal contribution &nbsp;·&nbsp; <sup>&#9993;</sup>Corresponding author</div>
 
   <div class="btns">
     <a class="btn" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm8 1v5h5"/></svg>arXiv</a>
-    <a class="btn" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C20.7 4.6 21.7 5 21.7 5c.6 1.6.2 2.8.1 3.1.8.9 1.2 2 1.2 3.2 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>Code</a>
-    <a class="btn" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Video</a>
+    <a class="btn" href="https://github.com/open-gigaai/PhysClaw"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C20.7 4.6 21.7 5 21.7 5c.6 1.6.2 2.8.1 3.1.8.9 1.2 2 1.2 3.2 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>Code</a>
     <a class="btn" href="#bibtex">BibTeX</a>
   </div>
 
@@ -330,14 +332,15 @@
 <section id="bibtex">
   <h2>BibTeX</h2>
 <pre>@article{wang2026physclaw,
-  title   = {PhysClaw: A Human-Robot Symbiotic System
-             for Physical-World Interaction},
+  title   = {PhysClaw-0: A Symbiotic Agentic System for
+             Robot Autonomy via Language Corrections},
   author  = {Wang, Boyuan and Zhang, Zhenyuan and Yang, Zhiqin and
              Gu, Peijun and Wang, Shuya and Wang, Xiaofeng and
              Ze, Xianghui and Chang, Yifan and Zhao, Guosheng and
              Shao, Jiangnan and Huang, Guan and Liu, Hengyu and
-             Zhang, Yonggang and Xue, Wei and Guo, Yike and
-             Wang, Xingang and Zhu, Zheng},
+             Zhang, Yonggang and Xue, Wei and Guan, Chunyuan and
+             Pu, Chenglin and Guo, Yike and Wang, Xingang and
+             Zhu, Zheng},
   journal = {arXiv preprint},
   year    = {2026}
 }</pre>
