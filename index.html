@@ -6,7 +6,7 @@
 <title>PhysClaw-0: A Symbiotic Agentic System for Robot Autonomy via Language Corrections</title>
 <meta name="description" content="PhysClaw — a human-robot symbiotic agentic system. The robot collects data autonomously and asks for help in natural language. Correct it once; the correction is reused in every subsequent round.">
 <meta property="og:title" content="PhysClaw-0: A Symbiotic Agentic System for Robot Autonomy via Language Corrections">
-<meta property="og:description" content="Matches full-teleoperation collection success with 16% of the human working time. Policies trained on its data match teleoperation data.">
+<meta property="og:description" content="Matches full-teleoperation episode collection success with 16% of the human working time. Policies fine-tuned on its data reach the same 80% success rate as teleoperation data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -174,8 +174,8 @@
   <div class="stats">
     <div class="stat"><div class="n a">16%</div><div class="l">human working time vs. teleop (4.8 vs 30.0 min)</div></div>
     <div class="stat"><div class="n a">6×</div><div class="l">trajectories per human-minute (10.42 vs 1.67)</div></div>
-    <div class="stat"><div class="n g">40→100%</div><div class="l">verifier accuracy after one language correction</div></div>
-    <div class="stat"><div class="n g">80.0%</div><div class="l">policy success — equal to full-teleop data</div></div>
+    <div class="stat"><div class="n g">12.5→47.5%</div><div class="l">single-attempt success after language corrections</div></div>
+    <div class="stat"><div class="n g">80.0%</div><div class="l">policy success — matches full-teleop data (20 trials)</div></div>
   </div>
 </header>
 
@@ -223,7 +223,7 @@
 
 <section>
   <h2>Autonomous Collection</h2>
-  <p class="muted center">50 / 50 episodes on the desktop-clearing testbed with 0 minutes of teleoperation — the operator types a few sentences, from anywhere.</p>
+  <p class="muted center">50 / 50 episodes on the desktop-clearing testbed with 0 minutes of teleoperation and 4.8 minutes of human working time — the operator types a few sentences, from anywhere.</p>
   <div class="vidgrid" style="margin-top:22px">
     <div class="vcell">
       <video src="static/videos/4objects.mp4" controls muted loop playsinline preload="metadata" aria-label="Desktop clearing with four objects"></video>
@@ -315,7 +315,7 @@
     <div class="bar"><span class="bl">Full human teleop (30 human-min)</span><span class="btrack"><span class="bfill" style="width:80%"></span></span><span class="bv">80.0%</span></div>
     <div class="bar hl"><span class="bl">PhysClaw data (4.8 human-min)</span><span class="btrack"><span class="bfill" style="width:80%"></span></span><span class="bv">80.0%</span></div>
   </div>
-  <p class="caption">PhysClaw data is good enough, not merely cheap — the same policy success as full teleoperation at a fraction of the human cost.</p>
+  <p class="caption">PhysClaw data is good enough, not merely cheap — the same 80% policy success as full teleoperation on this 20-trial evaluation, at a fraction of the human cost.</p>
 
   <div class="tablewrap">
   <table>
