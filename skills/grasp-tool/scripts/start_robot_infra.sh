@@ -6,12 +6,12 @@
 set -eo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-_PHYSGNOSIS_CALLER="${BASH_SOURCE[0]}"
+_PHYSCLAW_0_CALLER="${BASH_SOURCE[0]}"
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../../../configs/load_paths.sh"
 
-TMP="${TMPDIR:-/tmp}/physgnosis"
-CONDA_CLIENT="${CONDA_ENV:-physgnosis}"
+TMP="${TMPDIR:-/tmp}/physclaw-0"
+CONDA_CLIENT="${CONDA_ENV:-physclaw-0}"
 
 log_info() { printf '\033[1;34m[INFO]\033[0m  %s\n' "$*"; }
 log_ok()   { printf '\033[1;32m[ OK ]\033[0m  %s\n' "$*"; }

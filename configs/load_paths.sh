@@ -1,36 +1,36 @@
 #!/usr/bin/env bash
-# Shared path bootstrap for PhysGnosis shell scripts.
+# Shared path bootstrap for PhysClaw-0 shell scripts.
 # Usage from grasp-tools/: source "$(dirname "$0")/../configs/load_paths.sh"
 # Usage from skills/*/scripts/: source via _env.sh
 
-_physgnosis_resolve_root() {
+_physclaw_0_resolve_root() {
   local start cand
-  start="${_PHYSGNOSIS_CALLER:-${BASH_SOURCE[1]:-${BASH_SOURCE[0]}}}"
+  start="${_PHYSCLAW_0_CALLER:-${BASH_SOURCE[1]:-${BASH_SOURCE[0]}}}"
   start="$(cd "$(dirname "$start")" && pwd)"
   cand="$start"
   while [[ "$cand" != "/" ]]; do
     if [[ -d "$cand/skills" && -d "$cand/grasp-tools" && -d "$cand/configs" ]]; then
-      PHYSGNOSIS_ROOT="$cand"
+      PHYSCLAW_0_ROOT="$cand"
       return 0
     fi
     cand="$(dirname "$cand")"
   done
   if [[ -d "$start/../skills" && -d "$start/../configs" ]]; then
-    PHYSGNOSIS_ROOT="$(cd "$start/.." && pwd)"
+    PHYSCLAW_0_ROOT="$(cd "$start/.." && pwd)"
     return 0
   fi
-  echo "Warning: could not locate PhysGnosis root from $start" >&2
-  PHYSGNOSIS_ROOT="$(cd "$start/.." && pwd)"
+  echo "Warning: could not locate PhysClaw-0 root from $start" >&2
+  PHYSCLAW_0_ROOT="$(cd "$start/.." && pwd)"
 }
 
-_physgnosis_load_paths() {
+_physclaw_0_load_paths() {
   local conf
-  if [[ -z "${PHYSGNOSIS_ROOT:-}" || ! -d "${PHYSGNOSIS_ROOT}/grasp-tools" ]]; then
-    _physgnosis_resolve_root
+  if [[ -z "${PHYSCLAW_0_ROOT:-}" || ! -d "${PHYSCLAW_0_ROOT}/grasp-tools" ]]; then
+    _physclaw_0_resolve_root
   fi
-  export PHYSGNOSIS_ROOT
+  export PHYSCLAW_0_ROOT
 
-  conf="${PHYSGNOSIS_ROOT}/configs/paths.env"
+  conf="${PHYSCLAW_0_ROOT}/configs/paths.env"
   if [[ -f "$conf" ]]; then
     set -a
     # shellcheck disable=SC1091
@@ -40,7 +40,7 @@ _physgnosis_load_paths() {
 
   # One project env for capture / motion / collect tooling.
   : "${CONDA_SH:=${HOME}/miniconda3/etc/profile.d/conda.sh}"
-  : "${CONDA_ENV:=physgnosis}"
+  : "${CONDA_ENV:=physclaw-0}"
 
   # Official third-party envs (set to whatever names your AnyGrasp / SAM3 installs use).
   : "${CONDA_ENV_SAM3:=}"
@@ -78,9 +78,9 @@ _physgnosis_load_paths() {
   # Optional path to JSON with cam2base extrinsics (see configs/camera_extrinsics.example.json)
   : "${CAMERA_EXTRINSICS_JSON:=}"
 
-  : "${UNDERSTAND_SH:=${PHYSGNOSIS_ROOT}/skills/understand-three-view-images/scripts/auto_understand_images.sh}"
-  : "${ANALYZE_YAML:=${PHYSGNOSIS_ROOT}/skills/self-learning/analyze_result.yaml}"
-  : "${GRASP_TOOLS_DIR:=${PHYSGNOSIS_ROOT}/grasp-tools}"
+  : "${UNDERSTAND_SH:=${PHYSCLAW_0_ROOT}/skills/understand-three-view-images/scripts/auto_understand_images.sh}"
+  : "${ANALYZE_YAML:=${PHYSCLAW_0_ROOT}/skills/self-learning/analyze_result.yaml}"
+  : "${GRASP_TOOLS_DIR:=${PHYSCLAW_0_ROOT}/grasp-tools}"
 
   # Legacy aliases used by older scripts
   CONDA_ENV_CAPTURE="${CONDA_ENV}"
@@ -105,4 +105,4 @@ _physgnosis_load_paths() {
   export GSNET_DIR ANYGRASP_CHECKPOINT
 }
 
-_physgnosis_load_paths
+_physclaw_0_load_paths

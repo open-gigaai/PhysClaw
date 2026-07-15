@@ -15,7 +15,7 @@ touch the filesystem on its own. This tiny stdlib HTTP server hosts it and adds:
 Run it from the conda env that has episode_stats.py's deps (numpy/h5py/cv2),
 because deletion regenerates the report via `episode_stats.py --report-only`:
 
-  conda activate physgnosis
+  conda activate physclaw-0
   python serve_report.py                       # serves ../collected_data
   python serve_report.py --dataset-dir <dir> --port 8000
 

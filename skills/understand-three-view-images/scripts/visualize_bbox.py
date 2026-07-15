@@ -17,7 +17,7 @@ import cv2
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _REPO_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
 DEFAULT_IMAGE = os.environ.get(
-    "PHYSGNOSIS_BBOX_IMAGE",
+    "PHYSCLAW_0_BBOX_IMAGE",
     os.path.join(_REPO_ROOT, "grasp-tools", "example_data", "color.png"),
 )
 
@@ -197,4 +197,4 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
-# python visualize_bbox.py --image $PHYSGNOSIS_ROOT/skills/understand-three-view-images/tmp/front_preview.jpg --text "[green fruit: <bbox>209 520 289 689</bbox>]"
+# python visualize_bbox.py --image $PHYSCLAW_0_ROOT/skills/understand-three-view-images/tmp/front_preview.jpg --text "[green fruit: <bbox>209 520 289 689</bbox>]"

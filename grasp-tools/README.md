@@ -12,7 +12,7 @@ Piper + RealSense; that is not a hard requirement.
 
 | Env | Role |
 |-----|------|
-| `physgnosis` (`CONDA_ENV`) | Capture, IK/motion, collect stats/video |
+| `physclaw-0` (`CONDA_ENV`) | Capture, IK/motion, collect stats/video |
 | Official SAM3 env (`CONDA_ENV_SAM3`) | `run_seg.py` / seg server |
 | Official AnyGrasp env (`CONDA_ENV_ANYGRASP`) | `run_grasp*.py` |
 

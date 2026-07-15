@@ -3,7 +3,7 @@
 
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-_PHYSGNOSIS_CALLER="${BASH_SOURCE[0]}"
+_PHYSCLAW_0_CALLER="${BASH_SOURCE[0]}"
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../configs/load_paths.sh"
 

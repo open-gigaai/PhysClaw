@@ -15,4 +15,4 @@ grasp-tools/
   log/checkpoint_detection.tar
 ```
 
-These files are gitignored and must not be redistributed with PhysGnosis.
+These files are gitignored and must not be redistributed with PhysClaw-0.

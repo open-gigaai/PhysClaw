@@ -7,12 +7,12 @@ description: First analyze the task and generate a collect/reset plan, then loop
 
 This skill turns a natural-language request into a two-phase workflow: **Phase A (task analysis and plan generation)** and **Phase B (automated collect and environment reset loop)**. Execute strictly in order.
 
-Set `$PHYSGNOSIS_ROOT` to this repository root. Three-view scripts and analysis results live under `skills/` in this repo.
+Set `$PHYSCLAW_0_ROOT` to this repository root. Three-view scripts and analysis results live under `skills/` in this repo.
 
 ## Workflow
 
 ### Phase A: Task Analysis and Plan Generation
-1. **Scene perception**: Call `$PHYSGNOSIS_ROOT/skills/understand-three-view-images/scripts/auto_understand_images.sh --prompt "Briefly describe the current desktop scene, including which objects are present, their positions, and their states"` to extract current scene and object information.
+1. **Scene perception**: Call `$PHYSCLAW_0_ROOT/skills/understand-three-view-images/scripts/auto_understand_images.sh --prompt "Briefly describe the current desktop scene, including which objects are present, their positions, and their states"` to extract current scene and object information.
 2. **Confirm goals**: Combine the task description with available skills (e.g. `grasp-tool`) to define the action goals and skill invocation parameters needed to complete the task.
 3. **Plan design**:
    - **Collection plan**: Design the full action chain for one collection round and the Shell commands (`collection_command`).
@@ -27,11 +27,11 @@ Set `$PHYSGNOSIS_ROOT` to this repository root. Three-view scripts and analysis 
 1. **Read the plan**: Read `analyze_result.yaml` for all commands, `prompt_for_judging_collect`, `prompt_for_judging_reset`, and the total number of episodes to collect (`need_collect_count`).
 2. **Loop**: While `current_collect_count < need_collect_count`, run one round:
    - Collection actions: First observe to get fresh scene info, then execute Shell commands in `collection_command` one by one.
-   - Judge collection: Call `$PHYSGNOSIS_ROOT/skills/understand-three-view-images/scripts/auto_understand_images.sh --prompt <prompt_for_judging_collect>`:
+   - Judge collection: Call `$PHYSCLAW_0_ROOT/skills/understand-three-view-images/scripts/auto_understand_images.sh --prompt <prompt_for_judging_collect>`:
      - On success, proceed to reset.
      - On failure, retry from collection judging; if `collect_attempts > 1`, pause and request human help.
    - Reset actions: First observe to get fresh scene info, then execute Shell commands in `reset_command` one by one.
-   - Judge reset: Call `$PHYSGNOSIS_ROOT/skills/understand-three-view-images/scripts/auto_understand_images.sh --prompt <prompt_for_judging_reset>`:
+   - Judge reset: Call `$PHYSCLAW_0_ROOT/skills/understand-three-view-images/scripts/auto_understand_images.sh --prompt <prompt_for_judging_reset>`:
      - On success, proceed to the next round.
      - On failure, re-run reset actions; if `reset_attempts > 1`, pause and request human help.
 3. In Phase B, keep user messages brief: omit non-essential info; only report the current round, collection result, reset result, and progress.
@@ -53,7 +53,7 @@ Set `$PHYSGNOSIS_ROOT` to this repository root. Three-view scripts and analysis 
 ## Output Format
 
 ### Analysis result storage
-- **Path**: `$PHYSGNOSIS_ROOT/skills/self-learning/analyze_result.yaml`
+- **Path**: `$PHYSCLAW_0_ROOT/skills/self-learning/analyze_result.yaml`
 - **Example**: see `analyze_result.example.yaml` in the same directory
 - **Analysis result format**:
 ```text
@@ -82,7 +82,7 @@ Any situation not covered in this document is OOD. See `skills/self-learning/ref
 
 ## File layout
 ```
-$PHYSGNOSIS_ROOT/skills/self-learning/
+$PHYSCLAW_0_ROOT/skills/self-learning/
 ├── analyze_result.yaml           # Phase A output / Phase B input (local, not committed)
 ├── analyze_result.example.yaml
 └── reference/

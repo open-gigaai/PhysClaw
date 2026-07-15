@@ -1,4 +1,4 @@
-# Example analyze_result.yaml for PhysGnosis self-learning.
+# Example analyze_result.yaml for PhysClaw-0 self-learning.
 # Copy to analyze_result.yaml and edit before running stage B.
 
 task_name: put_fruit_in_basket
@@ -11,7 +11,7 @@ collection_plan:
   - step_1: Use grasp-tool to place target objects into the basket.
 collection_command:
   - step_1: >
-      bash $PHYSGNOSIS_ROOT/grasp-tools/run_multi_pipeline_recorder.sh
+      bash $PHYSCLAW_0_ROOT/grasp-tools/run_multi_pipeline_recorder.sh
       --mode diligent --no-gui --top-down --collect
       --task "banana" left 0.3 -0.27 0
       --task "orange" right 0.3 0.27 0
@@ -20,7 +20,7 @@ reset_plan:
   - step_1: Use grasp-tool to take objects out of the basket onto the table.
 reset_command:
   - step_1: >
-      bash $PHYSGNOSIS_ROOT/grasp-tools/run_multi_pipeline_recorder.sh
+      bash $PHYSCLAW_0_ROOT/grasp-tools/run_multi_pipeline_recorder.sh
       --mode diligent --no-gui --top-down
       --task "banana" left 0.34 0 0
       --task "orange" right 0.34 0 0

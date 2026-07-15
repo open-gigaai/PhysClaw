@@ -7,7 +7,7 @@ description: Skill for understanding RGB images from three cameras. Trigger when
 
 This skill understands images from the robot head, left-arm, and right-arm cameras. It auto-captures view images, runs a multimodal model, and returns an environment understanding result.
 
-Before running, set `ARK_API_KEY` (or `VOLCENGINE_API_KEY`) and `source $PHYSGNOSIS_ROOT/configs/paths.env`.
+Before running, set `ARK_API_KEY` (or `VOLCENGINE_API_KEY`) and `source $PHYSCLAW_0_ROOT/configs/paths.env`.
 
 ## Capabilities
 - Understand three-view / front-view image content and return current environment understanding

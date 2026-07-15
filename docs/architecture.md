@@ -13,7 +13,7 @@ grasp-tool
             ├─ RGB-D capture (your camera topics)
             ├─ SAM3 text → mask  (official SAM3 conda env)
             ├─ AnyGrasp + mask → pose  (official AnyGrasp conda env)
-            ├─ joint grasp/place  (physgnosis env + your IK/URDF)
+            ├─ joint grasp/place  (physclaw-0 env + your IK/URDF)
             └─ optional --collect → HDF5 + collect/ stats
 ```
 

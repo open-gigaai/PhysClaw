@@ -3,7 +3,7 @@
 ## 1. Configure paths
 
 ```bash
-cd /path/to/PhysGnosis
+cd /path/to/PhysClaw-0
 cp configs/paths.env.example configs/paths.env
 ```
 
@@ -21,20 +21,20 @@ cp configs/camera_extrinsics.example.json configs/camera_extrinsics.json
 
 ### Project env (required)
 
-Create one env for PhysGnosis tooling (ROS Python clients, OpenCV, h5py,
+Create one env for PhysClaw-0 tooling (ROS Python clients, OpenCV, h5py,
 Pinocchio/CasADi for IK, etc.):
 
 ```bash
-conda create -n physgnosis python=3.8   # version of your choice
-conda activate physgnosis
+conda create -n physclaw-0 python=3.8   # version of your choice
+conda activate physclaw-0
 # install your stack deps: rospy bindings, numpy, opencv, h5py, pinocchio, ...
 ```
 
-Set `CONDA_ENV=physgnosis` in `paths.env`.
+Set `CONDA_ENV=physclaw-0` in `paths.env`.
 
 ### SAM3 and AnyGrasp (official installs)
 
-Do **not** fold these into `physgnosis` unless you know the deps are compatible.
+Do **not** fold these into `physclaw-0` unless you know the deps are compatible.
 Follow each project's official environment instructions, then:
 
 ```bash

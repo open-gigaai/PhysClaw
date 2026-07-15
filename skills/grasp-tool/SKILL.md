@@ -5,16 +5,16 @@ description: Use when the user mentions "grasp", "pick up", or "pick and place".
 
 # grasp-tool
 
-This skill runs grasp-and-place (optional data collection) via `grasp-tools/run_multi_pipeline_recorder.sh` in the PhysGnosis repo.
+This skill runs grasp-and-place (optional data collection) via `grasp-tools/run_multi_pipeline_recorder.sh` in the PhysClaw-0 repo.
 
-Set `$PHYSGNOSIS_ROOT` to this repository root (or `source configs/paths.env` first).
+Set `$PHYSCLAW_0_ROOT` to this repository root (or `source configs/paths.env` first).
 
 ## Workflow
 
 Each `--task` is one "grasp + place" sub-task, executed in order. Use one for a single object, multiple for several objects.
 
 ```bash
-bash $PHYSGNOSIS_ROOT/grasp-tools/run_multi_pipeline_recorder.sh --mode diligent --no-gui --top-down \
+bash $PHYSCLAW_0_ROOT/grasp-tools/run_multi_pipeline_recorder.sh --mode diligent --no-gui --top-down \
   --task "<text_prompt>" <arm> <place_x> <place_y> <approach_depth_offset> \
   [--task "<text_prompt>" <arm> <place_x> <place_y> <approach_depth_offset> ...]
 ```
@@ -28,16 +28,16 @@ Examples:
 
 ```bash
 # Single object
-bash $PHYSGNOSIS_ROOT/grasp-tools/run_multi_pipeline_recorder.sh --mode diligent --no-gui --top-down \
+bash $PHYSCLAW_0_ROOT/grasp-tools/run_multi_pipeline_recorder.sh --mode diligent --no-gui --top-down \
   --task "orange" right 0.3 0.27 0
 
 # Multiple objects grasped in sequence
-bash $PHYSGNOSIS_ROOT/grasp-tools/run_multi_pipeline_recorder.sh --mode diligent --no-gui --top-down \
+bash $PHYSCLAW_0_ROOT/grasp-tools/run_multi_pipeline_recorder.sh --mode diligent --no-gui --top-down \
   --task "orange" right 0.3 0.27 0 \
   --task "banana" left 0.3 -0.27 0
 
 # Collect HDF5 (record arm-motion segments only)
-bash $PHYSGNOSIS_ROOT/grasp-tools/run_multi_pipeline_recorder.sh --mode diligent --no-gui --top-down --collect \
+bash $PHYSCLAW_0_ROOT/grasp-tools/run_multi_pipeline_recorder.sh --mode diligent --no-gui --top-down --collect \
   --task "banana" left 0.3 -0.27 0
 ```
 

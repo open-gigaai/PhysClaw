@@ -1,4 +1,4 @@
-# PhysGnosis
+# PhysClaw-0
 
 Agentic physical grasp and self-collection for dual-arm robots:
 **SAM3 text prompt → AnyGrasp → joint grasp/place**, orchestrated by OpenClaw-style
@@ -9,14 +9,14 @@ stats/quality tools, and four agent skills. It does **not** redistribute the
 proprietary AnyGrasp runtime (`.so`, license, checkpoint).
 
 > **Hardware note:** The reference lab used Agilex Piper arms and Intel RealSense
-> cameras. PhysGnosis does **not** require that stack — configure your own arm
+> cameras. PhysClaw-0 does **not** require that stack — configure your own arm
 > driver, camera launch, ROS topics, intrinsics, and extrinsics in
 > `configs/paths.env`.
 
 ## Layout
 
 ```text
-PhysGnosis/
+PhysClaw-0/
 ├── skills/
 ├── grasp-tools/            # Recorder pipeline + collect/ stats
 ├── configs/                # paths.env.example, camera_extrinsics.example.json
@@ -29,12 +29,12 @@ PhysGnosis/
 
 ```bash
 cp configs/paths.env.example configs/paths.env
-# Set CONDA_ENV=physgnosis, CONDA_ENV_SAM3 / CONDA_ENV_ANYGRASP (official envs),
+# Set CONDA_ENV=physclaw-0, CONDA_ENV_SAM3 / CONDA_ENV_ANYGRASP (official envs),
 # ARM_* / CAMERA_* / CAM_FX.. / topics / extrinsics for YOUR robot.
 ```
 
 2. Environments (see [docs/setup.md](docs/setup.md)):
-   - **One** project conda env: `physgnosis` (capture, IK/motion, collect tooling)
+   - **One** project conda env: `physclaw-0` (capture, IK/motion, collect tooling)
    - Install **SAM3** and **AnyGrasp** with their official docs; set `CONDA_ENV_SAM3` / `CONDA_ENV_ANYGRASP` to those env names
 
 3. Grasp + place:
@@ -60,7 +60,7 @@ bash grasp-tools/run_multi_pipeline_recorder.sh --mode diligent --no-gui --top-d
 
 | Component | Notes |
 |-----------|--------|
-| Conda `physgnosis` | Project code: capture, motion, collect stats |
+| Conda `physclaw-0` | Project code: capture, motion, collect stats |
 | Official SAM3 env | Set `CONDA_ENV_SAM3` after following SAM3 install docs |
 | Official AnyGrasp env | Set `CONDA_ENV_ANYGRASP` after following AnyGrasp install docs |
 | Your arm + camera ROS stack | Configure launches, topics, calibration |

@@ -1,6 +1,6 @@
 """Pinocchio IK helpers for arm EEF pose feasibility checks.
 
-Requires pinocchio + casadi in the project conda env (`physgnosis`).
+Requires pinocchio + casadi in the project conda env (`physclaw-0`).
 Point ARM_IK_DIR / ARM_URDF / ARM_ROS_SRC at your robot's Pinocchio scripts + URDF
 (reference lab used a Piper Pinocchio tree).
 """

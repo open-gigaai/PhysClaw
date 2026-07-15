@@ -5,7 +5,7 @@ description: Robot-arm self-learning skill that orchestrates analysis, collectio
 
 # Robot-arm self-learning skill
 
-This skill schedules other skills for self-learning. Repository root is `$PHYSGNOSIS_ROOT`.
+This skill schedules other skills for self-learning. Repository root is `$PHYSCLAW_0_ROOT`.
 
 ## Workflow
 1. Read `skills/1-analyze-task/SKILL.md` in this repo, produce collection and reset plans, and execute them.

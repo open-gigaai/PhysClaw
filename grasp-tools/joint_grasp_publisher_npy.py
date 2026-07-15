@@ -7,7 +7,7 @@ Planning lives in joint_grasp_plan.py; this file loads the npy, plans IK once,
 then publishes JointState via joint_publisher.JointPublisher.
 
 Example:
-  conda activate physgnosis
+  conda activate physclaw-0
   python joint_grasp_publisher_npy.py --arm left --npy eef_pose_xyzrpy.npy \\
       --place-x 0.25 --place-y -0.24
 """
